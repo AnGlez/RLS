@@ -1,0 +1,49 @@
+{% load static i18n widget_tweaks %}
+{% get_current_language as language %}
+
+<!DOCTYPE html>
+<html lang="{{ language }}" xmlns="http://www.w3.org/1999/html">
+<head>
+    <title>{% block title %}{% endblock %}</title>
+
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta http-equiv="Content-Language" content="es"/>
+
+    <!-- CSS -->
+    <link href="" rel="stylesheet" type="text/css"/>
+    <link href="{% static 'css/main.css' %}" rel="stylesheet"/>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+        {% block css %}{% endblock %}
+    <link rel="stylesheet" href="{% static 'bootstrap-switch-master/dist/css/bootstrap3/bootstrap-switch.css' %}">
+    <script src="{% static 'js/jquery-2.2.1.min.js' %}"></script>
+    <script src="{% static 'bootstrap-switch-master/dist/js/bootstrap-switch.js' %}"></script>
+    {% block js_head %}{% endblock %}
+</head>
+<body>
+<nav class="navbar navbar-default navbar-static-top">
+    <ul class="nav navbar-nav">
+        <li><a href="#">Home</a></li>
+        <li><a href="#">Cursos</a></li>
+        <li><a href="{% url 'examenes:listar' %}">Exámenes</a></li>
+    </ul>
+     <ul class="nav navbar-nav" id="logout">
+        <li><a href="{% url 'accounts:logout' %}">Cerrar sesión</a></li>
+    </ul>
+</nav>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xs-4 col-md-2"></div>
+        <div class="col-xs-10 col-md-8">
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+</div>
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.9/js/jquery.dataTables.min.js"></script>
+{% block js_footer %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,44 @@
+h1{
+    margin-bottom:20px;
+}
+.add-btn {
+    margin-top:20px;
+}
+.error, .alert-box {
+    color: #d9534f;
+}
+.login{
+    position: absolute;
+    top: 50%;
+    left:50%;
+    -webkit-transform: translate(-50%,-50%);
+    transform: translate(-50%,-50%);
+    width: 35%;
+}
+@media (max-width: 480px) {
+    .login {
+        width: 90%;
+    }
+}
+#edit-title{
+    font-weight: bold;
+    font-size: 20px;
+    outline: none !important;
+}
+#logout {
+    float: right;
+}
+#question-container{
+    min-height: 100px;
+    margin-bottom: 30px;
+}
+#question-list {
+    margin: 30px 15px 30px 15px;
+}
+.col-correctas label, .correct_answer{
+    width: 100%;
+    text-align: center;
+}
+.inciso{
+    margin-bottom: 10px;
+}

@@ -1,0 +1,63 @@
+{% extends 'base/base.html' %}
+{% load static i18n widget_tweaks %}
+{% block title %}Exámenes{% endblock title %}
+{% block content %}
+    <div class="row">
+        <div class="col-md-8">
+            <h1>Exámenes</h1>
+        </div>
+        <di class="col-md-4">
+            <a href="{% url 'examenes:crear' %}"  class="btn btn-primary btn-block add-btn">Agregar</a>
+        </di>
+    </div>
+    {% if exams %}
+        <div class="table-responsive">
+            <table class="table table-condensed">
+                <tr>
+                    <th>
+                        <strong>Nombre</strong>
+                    </th>
+                    <th>
+                        <strong>Unidad</strong>
+                    </th>
+                    <th>
+                        <strong>Curso</strong>
+                    </th>
+                     <th>
+                        <strong>Habilitado</strong>
+                    </th>
+                </tr>
+                    {% for exam in exams %}
+                        <tr>
+                            <td>
+                                <a href="{% url 'examenes:view' exam.id %}">
+                                    {{ exam.name }}
+                                </a>
+                            </td>
+                            <td>
+                                <a href="#">
+                                    {{ exam.unit }}
+                                </a>
+                            </td>
+                            <td>
+                                {{ exam.unit.course }}
+                            </td>
+                            <td>
+                                {% if exam.activated %}
+                                    <input name="activated" type="checkbox" checked="checked">
+                                    {% else %}
+                                    <input name="activated" type="checkbox">
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+            </table>
+        </div>
+
+    {% endif %}
+    <script>
+        $(document).ready(function(){
+            $("[name='activated']").bootstrapSwitch();
+        });
+    </script>
+{% endblock %}

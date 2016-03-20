@@ -1,0 +1,37 @@
+{% extends 'base/base.html' %}
+{% load static i18n widget_tweaks %}
+{% block title %}{{ exam.name }}{% endblock title %}
+{% block content %}
+   <div class="row">
+       <form action="{% url 'examenes:view' exam.id %}" method="POST" class="form-horizontal">
+           {% csrf_token %}
+           <div class="form-group">
+               <div class="col-md-8 col-xs-12">
+                   <h1>{{ exam.name }}</h1>
+               </div>
+               <div class="col-md-4 col-xs-6">{{ form.activated }}</div>
+           </div>
+           <div class="form-group">
+               <label class="col-sm-2 control-label">Unidad</label>
+                <div class="col-sm-8">
+                     <p class="form-control-static">{{ exam.unit }}</p>
+                </div>
+           </div>
+           <div class="form-group">
+               <label class="col-sm-2 control-label">Instrucciones</label>
+               <div class="col-sm-8">
+                   <p class="form-control-static">{{ exam.instructions }}</p>
+               </div>
+           </div>
+           <div class="form-group">
+               <div class="col-sm-offset-2 col-sm-2">
+                   <button type="submit" class="btn btn-primary">Guardar cambios</button>
+               </div>
+               <div class="col-sm-2">
+                   <a href="{% url 'examenes:listar' %}" class="btn btn-default">Cancelar</a>
+               </div>
+           </div>
+       </form>
+   </div>
+
+{% endblock %}

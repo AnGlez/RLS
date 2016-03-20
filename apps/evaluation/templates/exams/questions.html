@@ -1,0 +1,19 @@
+{% block lista %}
+<div id="question-container">
+    <hr>
+    <h2>Preguntas</h2>
+        {% if not preguntas %}
+            <p>No hay preguntas para este examen</p>
+            {% else %}
+                <ul class="list-group" id="quest-container">
+                {% for p in preguntas %}
+                    <li class="list-group-item">{{ p }}</li>
+                {% endfor %}
+
+                </ul>
+        {% endif %}
+    <button id="modal-btn" class="btn btn-default" data-toggle="modal" data-target="#agregarPregunta">
+        <span class="glyphicon glyphicon-plus"></span> Agregar pregunta
+    </button>
+</div>
+{% endblock %}

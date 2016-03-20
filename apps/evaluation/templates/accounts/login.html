@@ -1,0 +1,23 @@
+{% extends 'base/base_no_bar.html' %}
+{% load i18n widget_tweaks %}
+{% block title %}Sistema de aprendizaje remedial{% endblock title %}
+{% block login %}
+    <div class="login">
+        {% if form.non_field_errors %}
+            {% for error in form.non_field_errors %}
+                <div class="alert-box alert">{{ error }}</div>
+            {% endfor %}
+        {% endif %}
+        <div class="panel panel-default">
+            <div class="title panel-heading">Sistema de aprendizaje remedial</div>
+            <div class="panel-body">
+                <form action="{% url 'accounts:login' %}{% if redirect_url %}?next={{ redirect_url }}{% endif %}" method="post" c>
+                    {% csrf_token %}
+                    <div class="form-group">{{ form.username | attr:'required' | attr:'class:form-control'}}</div>
+                    <div class="form-group">{{ form.password | attr:'required'| attr:'class:form-control' }}</div>
+                    <button class="btn btn-primary" type="submit">{% trans 'Ingresar' %}</button>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

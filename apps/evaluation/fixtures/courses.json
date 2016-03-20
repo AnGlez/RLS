@@ -1,0 +1,11 @@
+[
+  {
+    "pk":1,
+    "model":"evaluation.Course",
+    "fields":{
+      "active":true,
+      "name": "Fundamentos de programación",
+      "code": "abc"
+    }
+  }
+]
