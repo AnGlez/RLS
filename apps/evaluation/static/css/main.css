@@ -28,6 +28,9 @@ h1{
 #logout {
     float: right;
 }
+#option-container{
+    margin-top: 20px;
+}
 #question-container{
     min-height: 100px;
     margin-bottom: 30px;
@@ -41,4 +44,78 @@ h1{
 }
 .inciso{
     margin-bottom: 10px;
+}
+.agregar{
+    display: block;
+    padding:30px 0 30px 10px;
+}
+.title{
+    margin-bottom:20px;
+}
+.switch{
+    margin-top: 20px;
+}
+.label{
+    font-size: 100% !important;
+}
+#concept-select {
+    width: 100% !important;
+}
+.guardar-cancelar{
+    margin-top: 40px;
+}
+.question-wrapper{
+    margin-bottom: 25px;
+    padding: 5px;
+}
+.question{
+    font-size: 15px;
+    background-color: #f8f8f8;
+    padding-top: 15px;
+    padding-left: 10px;
+    border-color:#e7e7e7;
+}
+.answers{
+    list-style: none;
+}
+.answers li{
+    margin-bottom: 10px;
+}
+.concept-pill {
+    display: inline-block;
+    padding: 15px;
+    border-radius: 15px;
+    font-size: 15px;
+    background-color: #5bc0de;
+    color: #fff;
+    width: 140px;
+    margin: 30px;
+}
+
+.concept-pill p{
+    width: 100%;
+    text-align: center;
+}
+.draggable {
+    -webkit-transform: translate(0px, 0px);
+    transform: translate(0px, 0px);
+}
+.concept-container{
+    position: absolute;
+    top: 0;
+    width: 100%;
+    z-index: 1;
+}
+#svg{
+    position: absolute;
+    top: 0;
+    width:100%;
+    z-index: -1;
+}
+.line{
+    stroke:#5bc0de;
+    stroke-width: 2;
+}
+#courses{
+    margin-top:30px;
 }

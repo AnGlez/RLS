@@ -29,7 +29,7 @@ INSTALLED_APPS = [
 		'django.contrib.staticfiles',
 		'django_select2',
 		'widget_tweaks',
-        'apps.evaluation'
+        'apps.evaluation',
 ]
 
 MIDDLEWARE_CLASSES = (

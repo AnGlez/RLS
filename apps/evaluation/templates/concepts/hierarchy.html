@@ -1,0 +1,196 @@
+{% extends 'base/base.html' %}
+{% load static i18n widget_tweaks %}
+{% block title %} Conceptos de curso {{ course }}{% endblock title %}
+{% block content %}
+    <svg id="svg">
+    </svg>
+    <div class="concept-container">
+        <div class="row">
+            <div class="col-md-8">
+                <h3>{{ course }}</h3>
+            </div>
+            <div class="col-md-4">
+                <button class="btn btn-primary btn-block add-btn" id="save">Guardar</button>
+            </div>
+        </div>
+    {% csrf_token %}
+    {% for c in concepts %}
+        <div id="con-{{ c.id }}" class="draggable concept-pill"
+                {% if c.posX %}
+                    data-x="{{ c.posX }}" data-y="{{ c.posY }}"
+                    style="transform: translate({{ c.posX }}px, {{ c.posY }}px);"
+                {% endif %}
+                >
+            <p>{{ c.name }}</p>
+        </div>
+     {% endfor %}
+
+    </div>
+
+    <script>
+
+        function darken(rgb) {
+
+           rgb = rgb.replace('rgb(', '').replace(')', '').split(',');
+            var red = $.trim(rgb[0]);
+            var green = $.trim(rgb[1]);
+            var blue = $.trim(rgb[2]);
+            darkenPercent = 15;
+            red = parseInt(red * (100 - darkenPercent) / 100);
+            green = parseInt(green * (100 - darkenPercent) / 100);
+            blue = parseInt(blue * (100 - darkenPercent) / 100);
+
+            rgb = 'rgb(' + red + ', ' + green + ', ' + blue + ')';
+            return rgb;
+        }
+
+    $(document).ready(function () {
+
+        selected = 0;
+        height = window.screen.availHeight;
+        cArray = Array();
+        concepts=[];
+        lns =Array();
+
+        $('.draggable').each(function(){
+            conId = $(this).attr('id').split('-')[1];
+            concepts.push({"id":conId, "related":[]});
+
+        });
+
+        $('#save').click(function(){
+
+            $(".line").each(function(){
+
+                id1 = $(this).attr('id').split('-')[1];
+                id2 = $(this).attr('id').split('-')[2];
+
+                $.grep(concepts,function(n,i){
+                    if($('#con-'+ n.id).attr('data-x') != null){
+                        n.posX = $('#con-'+ n.id).attr('data-x');
+                        n.posY = $('#con-'+ n.id).attr('data-y');
+                    }
+
+                    if (n.id == id1 && n.related.indexOf(id2) == -1){
+                        n.related.push(id2);
+                    }
+                });
+
+            });
+
+            var csfrToken = $("input[name=csrfmiddlewaretoken]").val();
+            $.ajax({
+                url: '{% url 'conceptos:ordenar' course.id %}',
+                method: 'POST',
+                data: {
+                    csrfmiddlewaretoken: csfrToken,
+                    concepts: JSON.stringify(concepts),
+                },
+                success:function(data){
+                    window.location.replace({% url 'examenes:listar' %})
+                }
+            });
+            console.log(concepts);
+        });
+
+        $('.concept-container').attr('style','height: '+height+"px");
+        $('#svg').attr('style','height: '+ height + 'px');
+
+        interact('.draggable')
+      .draggable({
+        // enable inertial throwing
+        inertia: false,
+        // keep the element within the area of it's parent
+        restrict: {
+          restriction: "parent",
+          endOnly: true,
+          elementRect: { top: 0, left: 0, bottom: 1, right: 1 }
+        },
+        // enable autoScroll
+        autoScroll: true,
+
+        // call this function on every dragmove event
+        onmove: dragMoveListener,
+        // call this function on every dragend event
+
+      });
+
+      function dragMoveListener (event) {
+        var target = event.target,
+            // keep the dragged position in the data-x/data-y attributes
+            x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx,
+            y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy;
+
+        // translate the element
+        target.style.webkitTransform =
+        target.style.transform =
+          'translate(' + x + 'px, ' + y + 'px)';
+
+        // update the posiion attributes
+        target.setAttribute('data-x', x);
+        target.setAttribute('data-y', y);
+      }
+
+      // this is used later in the resizing and gesture demos
+      window.dragMoveListener = dragMoveListener;
+    });
+
+    $(".draggable").mousemove(function(){
+            px = parseFloat($(this).offset().left) - parseFloat($(this).width());
+            py = parseFloat($(this).offset().top) - parseFloat($(this).height()) + 10;
+
+            conceptId = $(this).attr('id').split('-')[1];
+            lines = $(".line");
+
+            lines.each(function(){
+                if ($(this).attr('c1') == conceptId){
+                    $(this).attr('x1',px);
+                    $(this).attr('y1',py);
+                }
+                if ($(this).attr('c2') == conceptId){
+                    $(this).attr('x2',px);
+                    $(this).attr('y2',py);
+                }
+            });
+
+    });
+    $(".draggable").dblclick(function(){
+       selected = $(this).attr("id").split('-')[1];
+    });
+    $(".draggable").click(function(){
+
+        if (selected != 0){
+            second = $(this).attr("id").split('-')[1];
+            line = 'line-' + selected +'-' + second;
+
+            if (second != selected){
+                if (lns.indexOf(line) == -1){
+
+                    pos1 = $("#con-"+selected).position();
+                    pos2 = $("#con-"+second).position();
+                    var newLine = document.createElementNS('http://www.w3.org/2000/svg','line');
+                    x1 = pos1.left + $('#con-'+selected).width();
+                    y1 = pos1.top + $('#con-'+selected).height();
+                    x2 = pos2.left + $('#con-'+second).width();
+                    y2 = pos2.top + $('#con-'+second).height();
+
+                    newLine.setAttribute('x1',x1);
+                    newLine.setAttribute('y1',y1);
+                    newLine.setAttribute('x2',x2);
+                    newLine.setAttribute('y2',y2);
+                    newLine.setAttribute('id',line);
+                    newLine.setAttribute('c1',selected);
+                    newLine.setAttribute('c2',second);
+                    newLine.setAttribute('class','line');
+
+                    $("#svg").append(newLine);
+                    newColor = darken($('#con-'+selected).css('background-color'));
+                    $('#con-'+second).css('background-color',newColor);
+                    lns.push(line);
+                }
+            }
+            selected = 0;
+        }
+    })
+    </script>
+{% endblock %}

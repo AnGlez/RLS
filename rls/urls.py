@@ -28,6 +28,7 @@ urlpatterns = [
 		url(r'^(?P<exam_id>[\d]+)/', include([
 
 	 		url(r'^$',  views.exams.view, name = 'view'), #get, post
+			url(r'^editar', views.exams.edit, name='edit')
 
 		]))], namespace="examenes")),
 
@@ -35,5 +36,17 @@ urlpatterns = [
 	url(r'^preguntas/',include([
 
 		url(r'crear/$',views.questions.create,name='crear'), #get, post
-	],namespace="preguntas"))
+		url(r'^(?P<question_id>[\d]+)/editar/$',views.questions.edit,name='edit') #get,post
+	],namespace="preguntas")),
+
+	#Concept management
+	url(r'^conceptos/',include([
+		url(r'crear/$',views.concepts.create, name="crear"), #get, post
+		url(r'^(?P<course_id>[\d]+)/editor/$',views.concepts.hierarchy,name="ordenar") #get, post
+		],namespace="conceptos")),
+	#Concept management
+	url(r'^cursos/',include([
+		#url(r'crear/$',views.concepts.create, name="crear"), #get, post
+		url(r'^listar',views.courses.list,name="listar") #get, post
+		],namespace="cursos"))
 ]

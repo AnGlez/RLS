@@ -13,7 +13,6 @@ class Exam(Model):
 			- instructions: text containing special directions for students
 			- unit: fk to the unit it evaluates
 			- questions: set of questions
-			- due date: time limit for students to turn in the exam
 	"""
 	name = CharField(
 		max_length=60
@@ -28,6 +27,7 @@ class Exam(Model):
 	                  blank=False
 	)
 	activated = BooleanField(default=False)
+	duration = TimeField(null=True)
 
 	def __str__(self):
 		return self.name
@@ -45,13 +45,14 @@ class Question(Model):
 			- concepts: concepts being evaluated in such question
 			- correct_answer: if it's not an open question, reference to the expected answer
 			-points: question's value if it is answered correctly
+
 	"""
 
 	sentence = TextField(blank=False)
 
 	concepts = ManyToManyField('evaluation.Concept',
 	                           related_name='related_concepts',
-	                           blank=False,
+	                           blank=True,
 	                           null=True
 	)
 
@@ -63,7 +64,7 @@ class Question(Model):
 	                  )
 
 	def __str__(self):
-		return self.sentence
+		return self.sentence.encode('utf8')
 
 	class Meta(object):
 		verbose_name=_('pregunta')
@@ -79,15 +80,19 @@ class Concept(Model):
 	"""
 	name = CharField(
 		blank= False,
-		max_length= 200
+		max_length= 200,
+
 	)
 	required_by = ForeignKey('evaluation.Concept',
 	                         related_name='prerequisite',
 	                         blank= True,
 	                         null = True
 	)
+	posX = FloatField(blank=True, null=True)
+	posY = FloatField(blank=True, null=True)
+
 	def __str__(self):
-		return self.name
+		return self.name.encode('utf8')
 
 	class Meta(object):
 		verbose_name= _('concepto')
@@ -110,7 +115,7 @@ class PossibleAnswer(Model):
 	correct = BooleanField(default=False)
 
 	def __str__(self):
-		return self.text
+		return self.text.encode('utf8')
 
 	class Meta(object):
 		verbose_name = _('opción')

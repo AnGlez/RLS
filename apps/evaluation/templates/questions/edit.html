@@ -1,0 +1,111 @@
+{% extends 'base/base.html' %}
+{% load static i18n widget_tweaks %}
+{% block title %}Editar pregunta{% endblock title %}
+{% block content %}
+    <div class="row title">
+    <h2>Editar pregunta <small>{{ question.exam.name }}</small></h2>
+    </div>
+    <form action="{% url 'preguntas:edit' question.id %}" method="post" >
+    {% csrf_token %}
+    <!-- texto de la pregunta-->
+          <div class="row">
+              <div class="form-group col-xs-10">
+                  {{ question_form.sentence }}
+              </div>
+              <div class="form-group col-xs-2">
+                  {{ question_form.points }}
+              </div>
+          </div>
+          <!-- conceptos de la pregunta -->
+              <div class="row">
+                  <!--label class="control-label">Conceptos</label-->
+                  <div class="col-md-10">
+                      {{ question_form.concepts}}
+                  </div>
+              </div>
+    </form>
+    <div class="row">
+        <!-- opciones de la pregunta-->
+        <div class="form-group col-xs-12">
+          <div id="option-container">
+              <div class="row">
+                  <div class="col-md-10">
+                      <label class="control-label">Opciones</label>
+                  </div>
+                  <div class="col-md-2 col-correctas">
+                      <label>Correcta</label>
+                  </div>
+              </div>
+              {% for a in answers %}
+                  <div class="row" id="xans-{{ a.id }}">
+                  <div class="col-md-1"></div>
+                  <div class="col-md-9 inciso">
+                  <input type="text"
+                         value="{{ a.text }}"
+                         class="form-control" name="xinciso-{{ a.id }}" required>
+                  </div>
+                  <div class="col-md-2">
+                      {% if a.correct %}
+                          <input type="radio" class="correct_answer" name="correct" value="{{ a.id }}" checked="checked">
+                      {% else %}
+                          <input type="radio" class="correct_answer" name="correct" value="{{ a.id }}">
+                      {% endif %}
+                  </div>
+                  </div>
+              {% endfor %}
+          </div>
+          <div class="row">
+              <div class="col-md-10">
+                  <button id="add-ans" class="btn btn-default">
+                      <span class="glyphicon glyphicon-plus"></span>Inciso
+                  </button>
+              </div>
+          </div>
+            <!-- Botones guardar/cancelar-->
+            <div class="row guardar-cancelar">
+                <div class=" col-md-6 col-xs-10 btn-group btn-group-justified" role="group">
+                    <div class="btn-group" role="group">
+                        <button type="submit" class="btn btn-primary" id="guardar">Guardar</button>
+                    </div>
+                    <div class="btn-group" role="group">
+                        <a href="{% url 'examenes:view' question.exam.id %}" class="btn btn-default">Cancelar</a>
+                    </div>
+                </div>
+            </div>
+        <!-- Acaba guardar/cancelar-->
+        </div>
+    </div>
+<script>
+    $(document).ready(function(){
+        $('#guardar').click(function () {
+           $('form').submit();
+        });
+        count = 0;
+        $('#concept-select').select2({
+                placeholder:'Escribe los conceptos relacionados'
+            });
+        $('#add-ans').click(function() {
+                count++;
+                inciso = '<div class="row" id="row-' + count + '">' +
+                        '<div class="col-md-1" id="rem-'+count+'"></div>' +
+                        '<div class="col-md-9 inciso">' +
+                        '<input required name ="inciso-' + count + '"type="text" placeholder="Escribe el texto del inciso" ' +
+                        'class="form-control"></div><div class="col-md-2"><input type="radio" class="correct_answer" ' +
+                        'name ="correct" value="' + count + '">' +
+                        '</div></div>';
+                $('#option-container').append(inciso);
+                $('#rem-'+(count-1)+' button').remove();
+                $('#rem-'+count).append('<button class="remove-option btn btn-primary" id="opt-'+count+'">' +
+                                            '<span class="glyphicon glyphicon-minus"></span></button>');
+            });
+            $('body').on('click','.remove-option',function(){
+                num = $(this).attr('id').split('-')[1];
+                $('#row-'+num).remove();
+                count--;
+                $('#rem-'+count).append('<button class="remove-option btn btn-primary" id="opt-'+count+'">' +
+                                        '<span class="glyphicon glyphicon-minus"></span></button>');
+            });
+    })
+</script>
+{% endblock %}
+

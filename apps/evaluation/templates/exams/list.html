@@ -1,14 +1,14 @@
 {% extends 'base/base.html' %}
 {% load static i18n widget_tweaks %}
-{% block title %}Exámenes{% endblock title %}
+{% block title %} Mis cursos{% endblock title %}
 {% block content %}
-    <div class="row">
+    <div class="row title">
         <div class="col-md-8">
             <h1>Exámenes</h1>
         </div>
-        <di class="col-md-4">
+        <div class="col-md-4">
             <a href="{% url 'examenes:crear' %}"  class="btn btn-primary btn-block add-btn">Agregar</a>
-        </di>
+        </div>
     </div>
     {% if exams %}
         <div class="table-responsive">
@@ -35,12 +35,12 @@
                                 </a>
                             </td>
                             <td>
-                                <a href="#">
-                                    {{ exam.unit }}
-                                </a>
+                                {{ exam.unit }}
                             </td>
                             <td>
-                                {{ exam.unit.course }}
+                                <a href="{% url 'conceptos:ordenar' exam.id%}">
+                                    {{ exam.unit.course }}
+                                </a>
                             </td>
                             <td>
                                 {% if exam.activated %}
@@ -53,11 +53,8 @@
                     {% endfor %}
             </table>
         </div>
-
     {% endif %}
     <script>
-        $(document).ready(function(){
-            $("[name='activated']").bootstrapSwitch();
-        });
+        $("[name='activated']").bootstrapSwitch();
     </script>
 {% endblock %}

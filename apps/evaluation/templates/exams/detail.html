@@ -2,120 +2,47 @@
 {% load static i18n widget_tweaks %}
 {% block title %}{{ exam.name }}{% endblock title %}
 {% block content %}
-        {% if mensaje %}
-            <div class="row alert alert-successful">{{ mensaje }}</div>
-        {% endif %}
-   <div class="row">
-       <form action="{% url 'examenes:view' exam.id %}" method="POST" class="form-horizontal">
-           {% csrf_token %}
-           <div class="form-group">
-               <div class="col-md-8 col-xs-12">
-                   {{ form.name | attr:"id:edit-title"}}
-                   {% if form.name.errors %}
-                        {% for error in form.name.errors %}
-                            <small class="error">{% blocktrans %}{{ error }}{% endblocktrans %}</small>
-                        {% endfor %}
-                {% endif %}
-               </div>
-               <div class="col-md-4 col-xs-6 switch">{{ form.activated }}</div>
-           </div>
-           <div class="form-group">
-               <label class="col-sm-2 control-label">Unidad</label>
-                <div class="col-sm-8">
-                     {{ form.unit }}
-                    {% if form.unit.errors %}
-                        {% for error in form.unit.errors %}
-                            <small class="error">{% blocktrans %}{{ error }}{% endblocktrans %}</small>
-                        {% endfor %}
-                {% endif %}
-                </div>
-           </div>
-           <div class="form-group">
-               <label class="col-sm-2 control-label">Instrucciones</label>
-               <div class="col-sm-8 control-label">
-                   {{ form.instructions }}
-                   {% if form.instructions.errors %}
-                        {% for error in form.name.errors %}
-                            <small class="error">{% blocktrans %}{{ error }}{% endblocktrans %}</small>
-                        {% endfor %}
-                    {% endif %}
-               </div>
-           </div>
-           <!--EMPIEZA SECCION PREGUNTAS-->
-           {% block lista %}
-               {% include 'exams/questions.html' %}
-           {% endblock %}
-            <!-- Botones guardar/cancelar-->
-            <div class=" col-md-6 col-xs-10 btn-group btn-group-justified" role="group">
-                <div class="btn-group" role="group">
-                    <button type="submit" class="btn btn-primary">Guardar</button>
-                </div>
-                   <div class="btn-group" role="group">
-                       <a href="{% url 'examenes:listar' %}" class="btn btn-default">Cancelar</a>
-                   </div>
-               </div>
-        <!-- Acaba guardar/cancelar-->
-       </form>
-   </div>
-    {% block pregunta %}
-        {% include "exams/modals/add_question.html" %}
-{% endblock %}
+    <div class="row title">
+    {% if messages %}
+        <div class="row alert alert-successful">{{ message }}</div>
+    {% endif %}
+        <div class="col-md-8 col-xs-12">
+            <h2>{{ exam.name}} <small> {{ exam.unit }}</small></h2>
+        </div>
+       <div class="col-md-4 col-xs-6 switch">
+           {% if exam.activated %}
+               <input type="radio" checked="checked" name="activated">
+            {% else %}
+               <input type="radio"  name="activated">
+           {% endif %}
+       </div>
+    </div>
+    <div class="">
+
+    </div>
+    <div class="row">
+        <label class="col-sm-2 control-label">Instrucciones</label>
+        <div class="col-sm-8 control-label">
+            {{ exam.instructions }}
+        </div>
+    </div>
+       <!--EMPIEZA SECCION PREGUNTAS-->
+       {% block lista %}
+           {% include 'questions/questions.html' %}
+       {% endblock %}
+    <div class=" col-md-6 col-xs-10 btn-group btn-group-justified guardar-cancelar" role="group">
+        <div class="btn-group" role="group">
+            <a href="{% url 'examenes:edit' exam.id %}" class="btn btn-primary">Editar</a>
+        </div>
+         <div class="btn-group" role="group">
+            <a href="{% url 'examenes:listar' %}" class="btn btn-default">Regresar</a>
+        </div>
+     </div>
     <script>
         $(document).ready(function(){
             count = 1;
-
             $("[name='activated']").bootstrapSwitch();
-            $('#modal-btn').click(function(e){
-                e.preventDefault();
-            });
-            $('#add-ans').click(function(){
-                count++;
-                inciso = '<div class="row" id="row-'+count+'">' +
-                        '<div class="col-md-1">' +
-                        '<button class="remove-option btn btn-primary" id="opt-'+count+'">' +
-                        '<span class="glyphicon glyphicon-minus"></span></button></div>' +
-                        '<div class="col-md-9 inciso">' +
-                        '<input required name ="inciso-'+count+'"type="text" placeholder="Escribe el texto del inciso" ' +
-                        'class="form-control"></div><div class="col-md-2"><input type="radio" class="correct_answer" ' +
-                        'name ="correct" value="'+count+'">' +
-                        '</div></div>';
-                $('#option-container').append(inciso);
-                $('#opt-'+count).bind()
-            });
-            $('body').on('click','.remove-option',function(){
-                num = $(this).attr('id').split('-')[1];
-                $('#row-'+num).remove();
-            });
 
-            $("#save").click(function(){
-                var csfrToken = $("input[name=csrfmiddlewaretoken]").val();
-                inputs = $('#option-container').find('input[type=text]');
-                ans = [];
-                $(inputs).each(function(){
-                    ans.push($(this).val());
-                });
-                correct = $('input[name=correct]').val();
-                $.post({
-                        url:'{% url 'preguntas:crear' %}',
-                        data: {
-                            csrfmiddlewaretoken: csfrToken,
-                            answers: ans,
-                            sentence:$('input[name=sentence]').val(),
-                            points: $('input[name=points]').val(),
-                            exam:{{ exam.id }},
-                            correct_answer:ans[correct]
-                        }
-
-                }).error(function(xhr, status, error){
-                    var err = eval("(" + xhr.responseText + ")");
-                    console.log(err.Message);
-                }).done(function(data){
-                    questions = JSON.parse(data);
-                    $('#quest-container').append('<li>'+questions.sentence+'</li>');
-                    console.log(questions);
-
-                });
-            });
         });
 
     </script>

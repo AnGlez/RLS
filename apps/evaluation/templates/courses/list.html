@@ -1,0 +1,27 @@
+{% extends 'base/base.html' %}
+{% load static i18n widget_tweaks %}
+{% block title %} Mis cursos{% endblock title %}
+{% block content %}
+    <div class="row title">
+        <div class="col-md-8">
+            <h2>Mis cursos</h2>
+        </div>
+        <div class="col-md-4">
+            <a href="#" class="btn btn-primary btn-block add-btn">Agregar</a>
+        </div>
+    </div>
+    <div class="col-md-12">
+        {% if courses %}
+            <table class="table" id="courses">
+                 {% for c in courses %}
+                    <tr>
+                        <td class="col-md-8">{{ c.name }}</td>
+                        <div class="col-md-2"><a href="{% url 'conceptos:ordenar' c.id %}">Conceptos</a></div>
+                        <div class="col-md-2"><a href="#">Detalles</a></div>
+
+                    </tr>
+                {% endfor %}
+            </table>
+        {% endif %}
+    </div>
+{% endblock %}

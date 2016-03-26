@@ -3,8 +3,8 @@ from django.shortcuts import redirect, render_to_response, RequestContext
 from django.http import HttpResponseForbidden, HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
-from django.core.urlresolvers import reverse_lazy
-from apps.evaluation.models import Exam,Unit,Question
+from django.core.urlresolvers import reverse_lazy, reverse
+from apps.evaluation.models import Exam,Unit,Question,PossibleAnswer
 from django.contrib.auth.models import User
 from apps.evaluation.forms import ExamForm, QuestionForm
 from django.views.generic import View
@@ -24,7 +24,6 @@ class CreateExamView(View):
 	def get(self,request):
 		if not request.user.is_staff:
 			return HttpResponseForbidden()
-
 		form = ExamForm()
 		unit = Unit.objects.active()
 		return render_to_response('exams/create.html', context = RequestContext(request, locals()))
@@ -32,6 +31,9 @@ class CreateExamView(View):
 
 	@method_decorator(login_required)
 	def post(self,request):
+
+		if not request.user.is_staff:
+			return HttpResponseForbidden()
 
 		form = ExamForm(request.POST)
 
@@ -54,8 +56,10 @@ class ListExamsView(View):
 
 	@method_decorator(login_required)
 	def get(self,request):
-
-		exams = Exam.objects.active().filter()
+		if request.user.is_staff:
+			exams = Exam.objects.active().filter(unit__course__teacher = request.user)
+		else:
+			exams = Exam.objects.active().filter(activated = True,unit__course__students=request.user)
 		return render_to_response('exams/list.html',context=RequestContext(request,locals()))
 
 
@@ -65,33 +69,64 @@ class ViewExamView(View):
 
 	@method_decorator(login_required)
 	def get(self,request,exam_id=0):
+		if not request.user.is_staff:
+			return HttpResponseForbidden()
+
 		try: exam = Exam.objects.active().get(id=exam_id)
 		except Exam.DoesNotExist:
 			return HttpResponseForbidden()
 		else:
+			preguntas = Question.objects.active().filter(exam=exam)
+			for p in preguntas:
+					p.answers = PossibleAnswer.objects.active().filter(question=p)
+					p.num_answers = len(p.answers)
 			if request.user.is_staff:
-				form = ExamForm(instance=exam,initial = { 'user': request.user })
 				question_form = QuestionForm()
-				preguntas = Question.objects.active().filter(exam=exam)
 				return render_to_response('exams/detail.html',context = RequestContext(request, locals()))
 			else:
 				return render_to_response('exams/student_test.html',context = RequestContext(request, locals()))
 
 
+view = ViewExamView.as_view()
+
+class EditExamView(View):
+
+	@method_decorator(login_required)
+	def get(self,request,exam_id=0):
+		if not request.user.is_staff:
+			return HttpResponseForbidden()
+
+		try: exam = Exam.objects.active().get(id=exam_id)
+		except Exam.DoesNotExist:
+			return HttpResponseForbidden()
+		else:
+			if request.user.is_staff:
+				form = ExamForm(instance=exam)
+				question_form = QuestionForm()
+				question_form.fields['concepts'].queryset = exam.unit.concepts.all()
+				preguntas = Question.objects.active().filter(exam=exam)
+				for p in preguntas:
+					p.answers = PossibleAnswer.objects.active().filter(question=p)
+					p.num_answers = len(p.answers)
+				return render_to_response('exams/edit.html',context = RequestContext(request, locals()))
+			else:
+				return HttpResponseForbidden()
 
 	@method_decorator(login_required)
 	def post(self,request,exam_id=0):
 
+		if not request.user.is_staff:
+			return HttpResponseForbidden()
+
 		exam = Exam.objects.active().get(id=exam_id)
-		form = ExamForm(request.POST, instance=exam, initial={ 'user': request.user })
+		form = ExamForm(request.POST, instance=exam)
 
 		if form.is_valid():
 			exam = form.instance
 			form.save()
 			mensaje = 'El examen se actualizo correctamente'
-			return render_to_response('exams/detail.html',context = RequestContext(request, locals()),status=401)
+			return redirect(reverse('examenes:view',kwargs={'exam_id': exam.id}))
 
-		return render_to_response('exams/detail.html',context = RequestContext(request, locals()),status=401)
+		return render_to_response('exams/edit.html',context = RequestContext(request, locals()),status=401)
 
-view = ViewExamView.as_view()
-
+edit = EditExamView.as_view()

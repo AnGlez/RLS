@@ -46,7 +46,7 @@ class Unit(Model):
 		verbose_name = _('type name') topic.
 		Fields:
 			name: unit's name
-			main_concept: unit's central topic (concept)
+			concepts: concepts related to the unit
 			course: the course related to current unit
 	"""
 

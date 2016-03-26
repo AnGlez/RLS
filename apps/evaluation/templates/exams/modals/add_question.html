@@ -8,6 +8,7 @@
         <h4 class="modal-title">Nueva pregunta</h4>
       </div>
       <div class="modal-body">
+          <!-- texto de la pregunta-->
           <div class="row">
               <div class="form-group col-xs-10">
                   {{ question_form.sentence }}
@@ -16,11 +17,19 @@
                   {{ question_form.points }}
               </div>
           </div>
+          <!-- conceptos de la pregunta -->
+              <div class="row">
+                  <!--label class="control-label">Conceptos</label-->
+                  <div class="col-md-10">
+                      {{ question_form.concepts}}
+                  </div>
+              </div>
+           <!-- opciones de la pregunta-->
           <div class="row">
               <div class="form-group col-xs-12">
                   <div class="row">
                       <div class="col-md-10">
-                           <label>Opciones</label>
+                           <!--label class="control-label">Opciones</label-->
                       </div>
                       <div class="col-md-2 col-correctas">
                           <label>Correcta</label>
@@ -30,7 +39,7 @@
                       <div class="row" id="row-1">
                           <div class="col-md-1"></div>
                           <div class="col-md-9 inciso">
-                              <input type="text" placeholder="Escribe el texto del inciso" class="form-control" name="inciso-1">
+                              <input type="text" placeholder="Escribe el texto del inciso" class="form-control" name="inciso-1" required>
                           </div>
                           <div class="col-md-2">
                               <input type="radio" class="correct_answer" name="correct" value="1">

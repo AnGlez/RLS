@@ -1,0 +1,54 @@
+{% block lista %}
+<div id="question-container">
+    <hr>
+    <h2>Preguntas</h2>
+    {% if not preguntas %}
+        <p>No hay preguntas para este examen</p>
+    {% else %}
+        <div class="list-group" id="quest-container">
+            {% for p in preguntas %}
+                <div class="col-md-11">
+                    <button type="button" class="list-group-item"
+                            data-toggle="collapse" data-target="#q-{{ p.id }}"
+                            aria-expanded="false" aria-controls="q-{{ p.id }}">
+                        {{ p }}
+                    <span class="badge">
+                        {{ p.points }} puntos
+                    </span>
+                    </button>
+                </div>
+                <div class="col-md-1">
+                    <a class="btn btn-primary btn-block" href="{% url 'preguntas:edit' p.id%}">
+                        <span class="glyphicon glyphicon-edit"></span>
+                    </a>
+                </div>
+                <div id="q-{{ p.id }}" class="collapse col-md-11">
+                    <div class="row">
+                        {% for c in p.related_concepts %}
+                            <span class="badge">{{ c }}</span>
+                        {% endfor %}
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <ul class="list-group">
+                                {% for a in p.answers %}
+                                    {% if a.correct %}
+                                        <li class="list-group-item list-group-item-success">
+                                            <span class="glyphicon glyphicon-ok"></span>
+                                        {{ a.text }}
+                                        </li>
+                                        {% else %}
+                                             <li class="list-group-item">
+                                                 {{ a.text }}
+                                            </li>
+                                    {% endif %}
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+        </div>
+        {% endif %}
+</div>
+{% endblock %}
