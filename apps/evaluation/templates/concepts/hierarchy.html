@@ -55,7 +55,6 @@
         $('.draggable').each(function(){
             conId = $(this).attr('id').split('-')[1];
             concepts.push({"id":conId, "related":[]});
-
         });
 
         $('#save').click(function(){
@@ -70,7 +69,6 @@
                         n.posX = $('#con-'+ n.id).attr('data-x');
                         n.posY = $('#con-'+ n.id).attr('data-y');
                     }
-
                     if (n.id == id1 && n.related.indexOf(id2) == -1){
                         n.related.push(id2);
                     }
@@ -168,7 +166,9 @@
 
                     pos1 = $("#con-"+selected).position();
                     pos2 = $("#con-"+second).position();
+
                     var newLine = document.createElementNS('http://www.w3.org/2000/svg','line');
+
                     x1 = pos1.left + $('#con-'+selected).width();
                     y1 = pos1.top + $('#con-'+selected).height();
                     x2 = pos2.left + $('#con-'+second).width();

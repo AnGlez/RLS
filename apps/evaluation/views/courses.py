@@ -20,8 +20,11 @@ class ListCourseView(View):
 
 	@method_decorator(login_required)
 	def get(self,request):
+		if request.user.is_staff:
+			courses = Course.objects.active().filter(teacher=request.user)
+		else:
+			courses = Course.objects.active().filter(students=request.user)
 
-		courses = Course.objects.active().filter(teacher=request.user)
 		return render_to_response('courses/list.html',context = RequestContext(request, locals()))
 
 list = ListCourseView.as_view()

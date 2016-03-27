@@ -1,0 +1,99 @@
+{% extends 'base/base.html' %}
+{% load static i18n widget_tweaks %}
+{% block title %}Resultados{{ exam.name }}{% endblock title %}
+{% block content %}
+    <div class="row title">
+        <div class="col-md-12">
+            <h1>{{ test.name }}</h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-2 text-right"><strong>Unidad: </strong></div>
+        <div class="col-md-10">{{ test.unit }}</div>
+    </div>
+    <div class="row">
+        <div class="col-md-2 text-right"><strong>Puntaje: </strong></div>
+        <div class="col-md-10">{{ points }} / {{ total }}</div>
+    </div>
+    <hr>
+    <div class="results">
+        <div class="row">
+            <div class="col-md-10">
+                <h3>Resumen</h3>
+            </div>
+        </div>
+        <div class="row  panel panel-default">
+            <div class="col-md-10 concepts concepts-missing">
+                {% for m in missing_concepts %}
+                    <div class="concept wrong">
+                        {{ m }}
+                    </div>
+                {% endfor %}
+
+            </div>
+        </div>
+    {% for q in questions %}
+        <div class="row">
+            <div class="col-md-10 concepts">
+                {% for c in q.concepts.all %}
+                    {% if q.correct %}
+                        <span class="concept wrong">{{ c }}</span>
+                    {% else %}
+                         <span class="concept right">{{ c }}</span>
+                    {% endif %}
+
+                {% endfor %}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <ul class="list-group">
+                    <li class="list-group-item">
+                        <div class="row">
+                            <div class="col-md-10">
+                                {{ q.sentence }}
+                            </div>
+                            <div class="col-md-2">
+                                <span class="badge">{{ q.points }} puntos</span>
+                            </div>
+                        </div>
+                    </li>
+                    {% if q.correct %}
+                        <li class="list-group-item list-group-item-success">
+                            <span class="glyphicon glyphicon-ok-circle"></span>
+                            {{ q.correct.0 }}
+                        </li>
+                        {% if q.ans.0 %}
+                            <li class="list-group-item list-group-item-danger">
+                                <span class="glyphicon glyphicon-remove-circle"></span>
+                                {{ q.ans.0.answer }}
+                            </li>
+                            {% else %}
+                                <li class="list-group-item list-group-item-danger">
+                                    <span class="glyphicon glyphicon-remove-circle"></span>
+                                    -----
+                                </li>
+                        {% endif %}
+
+                    {% else %}
+                        <li class="list-group-item list-group-item-success">
+                            <span class="glyphicon glyphicon-ok-circle"></span>
+                            {{ q.ans.0.answer }}
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    {% endfor %}
+    </div>
+    <div class="row title">
+        <div class=" col-md-6 col-xs-10 btn-group btn-group-justified" role="group">
+            <div class="btn-group" role="group">
+                <a href="#" class="btn btn-primary">Ir a actividades</a>
+            </div>
+            <div class="btn-group" role="group">
+                <a href="{% url 'examenes:listar' %}" class="btn btn-default">Regresar</a>
+            </div>
+        </div>
+    </div>
+{% endblock %}

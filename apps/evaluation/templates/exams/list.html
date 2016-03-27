@@ -1,14 +1,16 @@
 {% extends 'base/base.html' %}
 {% load static i18n widget_tweaks %}
-{% block title %} Mis cursos{% endblock title %}
+{% block title %} Mis exámenes{% endblock title %}
 {% block content %}
     <div class="row title">
         <div class="col-md-8">
-            <h1>Exámenes</h1>
+            <h2>Mis exámenes</h2>
         </div>
-        <div class="col-md-4">
-            <a href="{% url 'examenes:crear' %}"  class="btn btn-primary btn-block add-btn">Agregar</a>
-        </div>
+        {% if request.user.is_staff %}
+            <div class="col-md-4">
+                <a href="{% url 'examenes:crear' %}"  class="btn btn-primary btn-block add-btn">Agregar</a>
+            </div>
+        {% endif %}
     </div>
     {% if exams %}
         <div class="table-responsive">
@@ -24,32 +26,49 @@
                         <strong>Curso</strong>
                     </th>
                      <th>
-                        <strong>Habilitado</strong>
+                        <strong>Acción</strong>
                     </th>
                 </tr>
                     {% for exam in exams %}
-                        <tr>
-                            <td>
-                                <a href="{% url 'examenes:view' exam.id %}">
+                        {% if not request.user.is_staff and exam.activated or request.user.is_staff %}
+                            <tr>
+                                <td>
                                     {{ exam.name }}
-                                </a>
-                            </td>
-                            <td>
-                                {{ exam.unit }}
-                            </td>
-                            <td>
-                                <a href="{% url 'conceptos:ordenar' exam.id%}">
-                                    {{ exam.unit.course }}
-                                </a>
-                            </td>
-                            <td>
-                                {% if exam.activated %}
-                                    <input name="activated" type="checkbox" checked="checked">
+                                </td>
+                                <td>
+                                    {{ exam.unit }}
+                                </td>
+                                <td>
+                                    {% if request.user.is_staff %}
+                                         <a href="{% url 'conceptos:ordenar' exam.id%}">
+                                            {{ exam.unit.course }}
+                                        </a>
+                                        {% else %}
+                                        {{ exam.unit.course }}
+                                    {% endif %}
+                                </td>
+                                <td>
+                                {% if request.user.is_staff %}
+                                    <div class="btn-group">
+                                        <a href="{% url 'examenes:view' exam.id %}" class="btn btn-default">
+                                            <span class="glyphicon glyphicon-eye-open"></span>
+                                        </a>
+                                        <a href="{% url 'examenes:edit' exam.id %}" class="btn btn-default">
+                                            <span class="glyphicon glyphicon-edit"></span>
+                                        </a>
+                                    </div>
+
                                     {% else %}
-                                    <input name="activated" type="checkbox">
+                                    {% if exam.completed %}
+                                        <a href="{% url 'examenes:results' exam.id %}" class="btn btn-default">Ver resultados</a>
+                                    {% else %}
+                                        <a href="{% url 'examenes:view' exam.id %}" class="btn btn-primary">Contestar</a>
+                                    {% endif %}
                                 {% endif %}
-                            </td>
-                        </tr>
+
+                                </td>
+                            </tr>
+                        {% endif %}
                     {% endfor %}
             </table>
         </div>

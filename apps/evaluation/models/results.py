@@ -9,9 +9,9 @@ from django.contrib.auth.models import User
 
 class ChosenAnswer(Model):
 
-	student = ForeignKey(User,
-	                     related_name='student')
+	student = ForeignKey(User,related_name='student')
 	answer = ForeignKey('evaluation.PossibleAnswer', related_name='chosen')
+	question = ForeignKey('evaluation.Question', related_name='section', null=True)
 
 	class Meta(object):
 		verbose_name = 'respuesta'

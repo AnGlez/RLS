@@ -83,7 +83,7 @@ class Concept(Model):
 		max_length= 200,
 
 	)
-	required_by = ForeignKey('evaluation.Concept',
+	required_by = ManyToManyField('evaluation.Concept',
 	                         related_name='prerequisite',
 	                         blank= True,
 	                         null = True

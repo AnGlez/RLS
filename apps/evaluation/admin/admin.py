@@ -5,7 +5,8 @@ from apps.evaluation.models import (
 	Exam,
 	Question,
 	Concept,
-	PossibleAnswer
+	PossibleAnswer,
+	ChosenAnswer
 )
 
 site.register(Course)
@@ -14,3 +15,4 @@ site.register(Unit)
 site.register(Question)
 site.register(Concept)
 site.register(PossibleAnswer)
+site.register(ChosenAnswer)

@@ -3,55 +3,84 @@
 {% block title %}{{ exam.name }}{% endblock title %}
 {% block content %}
    <div class="row">
-       <form action="{% url 'examenes:view' exam.id %}" method="POST" class="form-horizontal">
-           {% csrf_token %}
-           <div class="form-group">
-               <div class="col-md-8 col-xs-12">
-                   <h1>{{ exam.name }} <small>{{ exam.unit }}</small></h1>
-               </div>
-               <div class="col-md-4 col-xs-6">{{ form.activated }}</div>
-           </div>
-           <div class="form-group">
-               <div class="col-sm-10">
-                   <blockquote>
-                       <p>{{ exam.instructions }}</p>
-                   </blockquote>
-               </div>
-           </div>
-       <!--empieza examen-->
-           <div class="test-questions form-group">
-            {% for p in preguntas %}
-                <div class="question-wrapper">
-                    <div class="question row">
-                        <div class="col-md-10">
-                            {{ p.sentence }}
-                        </div>
-                        <div class="col-md-2">
-                            <span class="badge">{{ p.points }} puntos</span>
-                        </div>
-                        <hr>
-                    </div>
-                    <ul class="answers">
-                    {% for a in p.answers %}
-                        <li>
-                            <input type="radio" name="ans-{{ p.id }}" value="{{ a.id }}">
-                            {{ a.text }}
-                        </li>
-                    {% endfor %}
-                    </ul>
-                </div>
-
-            {% endfor %}
-           </div>
-           <div class="form-group">
-               <div class="col-sm-offset-2 col-sm-2">
-                   <button type="submit" class="btn btn-primary">Guardar cambios</button>
-               </div>
-               <div class="col-sm-2">
-                   <a href="{% url 'examenes:listar' %}" class="btn btn-default">Cancelar</a>
-               </div>
-           </div>
-       </form>
+       <div class="col-md-8 col-xs-12 title">
+           <h1>{{ exam.name }} <small>{{ exam.unit }}</small></h1>
+       </div>
+       <div class="col-md-4 col-xs-6">{{ form.activated }}</div>
+       <div class="col-sm-10">
+           <blockquote>
+               <p>{{ exam.instructions }}</p>
+           </blockquote>
+       </div>
    </div>
+   <!--empieza examen-->
+       <div class="test-questions">
+       {% csrf_token %}
+        {% for p in preguntas %}
+            <div class="question-wrapper">
+                <div class="question row">
+                    <div class="col-md-10">
+                        {{ p.sentence }}
+                    </div>
+                    <div class="col-md-2">
+                        <span class="badge">{{ p.points }} puntos</span>
+                    </div>
+                </div>
+                <ul class="answers">
+                {% for a in p.answers %}
+                    <li>
+                        <input type="radio" class="ans" name="ans-{{ p.id }}" value="{{ a.id }}">
+                        {{ a.text }}
+                    </li>
+                {% endfor %}
+                </ul>
+            </div>
 
+        {% endfor %}
+       </div>
+       <div class="row">
+           <div class="col-sm-offset-2 col-sm-2">
+               <button type="submit" class="btn btn-primary" id="save">Guardar cambios</button>
+           </div>
+           <div class="col-sm-2">
+               <a href="{% url 'examenes:listar' %}" class="btn btn-default">Cancelar</a>
+           </div>
+       </div>
+
+    <script>
+        $(document).ready(function(){
+            var answers=[];
+            var csfrToken = $("input[name=csrfmiddlewaretoken]").val();
+            var numQuestions = $('.question-wrapper').length;
+
+            $("#save").click(function(){
+                $('input[type=radio]:checked').each(function(){
+                   question = $(this).attr('name').split('-')[1];
+                    answer = $(this).val();
+                    answers.push({"q_id":question, "a_id": answer});
+                });
+                if (numQuestions > $('input[type=radio]:checked').length){
+                    unanswered = $('input[type=radio]:checked').length - numQuestions;
+                    continuar =confirm('No has contestado '+ unanswered + ' preguntas. Deseas continuar?');
+                    if (!continuar){
+                        return false;
+                    }
+                }
+                $.ajax({
+                   url: '{% url 'examenes:responder'%}',
+                    method:'POST',
+                    data:{
+                        ans:JSON.stringify(answers),
+                        csrfmiddlewaretoken: csfrToken
+                    },
+                    success:function(){
+                         window.location.replace({% url 'examenes:listar' %})
+                    }
+                }).error(function(xhr, status, error){
+                        var err = eval("(" + xhr.responseText + ")");
+                        console.log(err.Message);
+                    });
+            });
+        });
+    </script>
 {% endblock %}

@@ -1,13 +1,13 @@
 from __future__ import unicode_literals
 from django.shortcuts import redirect, render_to_response, RequestContext
-from django.http import HttpResponseForbidden, HttpResponse
+from apps.evaluation.models import Exam,Unit,Question,PossibleAnswer, ChosenAnswer
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.core.urlresolvers import reverse_lazy, reverse
-from apps.evaluation.models import Exam,Unit,Question,PossibleAnswer
-from django.contrib.auth.models import User
 from apps.evaluation.forms import ExamForm, QuestionForm
+from django.http import HttpResponseForbidden
 from django.views.generic import View
+from django.db.models import Q
 
 
 __all__ = [
@@ -59,7 +59,14 @@ class ListExamsView(View):
 		if request.user.is_staff:
 			exams = Exam.objects.active().filter(unit__course__teacher = request.user)
 		else:
-			exams = Exam.objects.active().filter(activated = True,unit__course__students=request.user)
+			exams = Exam.objects.active().filter(Q(unit__course__students=request.user))
+			for e in exams:
+				if len(ChosenAnswer.objects.active().filter(question__exam = e)) > 0:
+					e.completed = True
+				else:
+					e.completed = False
+					if not e.activated: exams.exclude(id = e.id)
+
 		return render_to_response('exams/list.html',context=RequestContext(request,locals()))
 
 
@@ -69,8 +76,6 @@ class ViewExamView(View):
 
 	@method_decorator(login_required)
 	def get(self,request,exam_id=0):
-		if not request.user.is_staff:
-			return HttpResponseForbidden()
 
 		try: exam = Exam.objects.active().get(id=exam_id)
 		except Exam.DoesNotExist:

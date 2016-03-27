@@ -121,10 +121,12 @@
                     console.log(err.Message);
                 }).success(function(response){
                     $('#agregarPregunta').modal('hide');
-                    question = '<button type="button" class="list-group-item" data-toggle="collapse" ' +
+                    question = '<div class="col-md-11"><button type="button" class="list-group-item" data-toggle="collapse" ' +
                             'data-target="#q-'+response.data.id+'" aria-expanded="false" aria-controls="q-'+
                             response.data.id+'">' + response.data.sentence +'<span class="badge">'+
-                            response.data.points+' puntos </span> </button>';
+                            response.data.points+' puntos </span> </button></div>' +
+                            '<div class="col-md-1"> <a class="btn btn-primary btn-block" href="">' +
+                            '<span class="glyphicon glyphicon-edit"></span> </a> </div>';
 
                     $('#quest-container').append(question);
                 });

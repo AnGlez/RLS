@@ -6,9 +6,12 @@
         <div class="col-md-8">
             <h2>Mis cursos</h2>
         </div>
-        <div class="col-md-4">
-            <a href="#" class="btn btn-primary btn-block add-btn">Agregar</a>
-        </div>
+        {% if request.user.is_staff %}
+            <div class="col-md-4">
+                <a href="#" class="btn btn-primary btn-block add-btn">Agregar</a>
+            </div>
+        {% endif %}
+
     </div>
     <div class="col-md-12">
         {% if courses %}
@@ -16,12 +19,17 @@
                  {% for c in courses %}
                     <tr>
                         <td class="col-md-8">{{ c.name }}</td>
-                        <div class="col-md-2"><a href="{% url 'conceptos:ordenar' c.id %}">Conceptos</a></div>
-                        <div class="col-md-2"><a href="#">Detalles</a></div>
+                        {% if request.user.is_staff %}
+                            <td class="col-md-2"><a href="{% url 'conceptos:ordenar' c.id %}">Conceptos</a></td>
+                        {% endif %}
+                        <td class="col-md-2"><a href="#">Detalles</a></td>
 
                     </tr>
                 {% endfor %}
             </table>
+            {% else %}
+                <p>No estás registrado en ningún curso</p>
+
         {% endif %}
     </div>
 {% endblock %}

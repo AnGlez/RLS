@@ -25,10 +25,12 @@ urlpatterns = [
 
 		url(r'crear/$',views.exams.create,name='crear'), #get, post
 		url(r'^$',views.exams.list,name='listar'),
+		url(r'^responder',views.tests.answer, name='responder'),
 		url(r'^(?P<exam_id>[\d]+)/', include([
 
 	 		url(r'^$',  views.exams.view, name = 'view'), #get, post
-			url(r'^editar', views.exams.edit, name='edit')
+			url(r'^editar', views.exams.edit, name='edit'),
+			url(r'^resultados',views.tests.results, name = 'results')
 
 		]))], namespace="examenes")),
 
