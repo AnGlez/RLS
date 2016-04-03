@@ -27,7 +27,7 @@ class Exam(Model):
 	                  blank=False
 	)
 	activated = BooleanField(default=False)
-	duration = TimeField(null=True)
+	duration = TimeField(blank=False, default='01:00:00')
 
 	def __unicode__(self):
 		return self.name

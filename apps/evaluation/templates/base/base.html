@@ -29,12 +29,16 @@
 <body>
 <nav class="navbar navbar-default navbar-static-top">
     <ul class="nav navbar-nav">
-        <li><a href="#">Home</a></li>
         <li><a href="{% url 'cursos:listar' %}">Cursos</a></li>
         <li><a href="{% url 'examenes:listar' %}">Exámenes</a></li>
     </ul>
      <ul class="nav navbar-nav" id="logout">
-        <li><a href="{% url 'accounts:logout' %}">Cerrar sesión</a></li>
+         <p class="navbar-text">¡Hola {{ request.user.first_name }}!</p>
+        <li>
+            <a href="{% url 'accounts:logout' %}">
+                Cerrar sesión
+            </a>
+        </li>
     </ul>
 </nav>
 

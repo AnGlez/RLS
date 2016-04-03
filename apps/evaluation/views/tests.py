@@ -51,7 +51,7 @@ class ViewResultsView(View):
 		missing_concepts = []
 
 		for q in questions:
-			q.ans = ChosenAnswer.objects.active().filter(question = q)
+			q.ans = ChosenAnswer.objects.active().filter(question = q, student=request.user)
 			total+=q.points
 			if len(q.ans) > 0 and q.ans[0].answer.correct:
 				correct_count+=1

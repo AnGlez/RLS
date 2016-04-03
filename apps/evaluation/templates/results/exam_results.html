@@ -18,14 +18,14 @@
     <hr>
     <div class="results">
     {% if missing_concepts %}
-         <div class="concept-box">
+         <div class="concept-box wrong">
             <span class="glyphicon glyphicon-exclamation-sign"></span>
-            <label>Conceptos de recuperacion</label>
+            <label>Conceptos de recuperación</label>
             <div>
                 {% for m in missing_concepts %}
-                    <div class="concept">
+                    <a href="#" class="concept wrong-inverted">
                         {{ m }}
-                    </div>
+                    </a>
                 {% endfor %}
             </div>
 
@@ -59,9 +59,9 @@
                             <div class="col-md-12 concepts">
                                 {% for c in q.concepts.all %}
                                     {% if q.correct %}
-                                        <span class="concept wrong">{{ c }}</span>
+                                        <a href="#" class="concept wrong-inverted">{{ c }}</a>
                                     {% else %}
-                                         <span class="concept right">{{ c }}</span>
+                                         <span class="concept right-inverted">{{ c }}</span>
                                     {% endif %}
 
                                 {% endfor %}

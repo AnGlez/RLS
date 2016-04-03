@@ -47,12 +47,10 @@ class ViewCourseView(View):
 			return render_to_response('courses/detail.html', context=RequestContext(request, locals()))
 		else:
 			for e in exams:
-				if len(ChosenAnswer.objects.active().filter(question__exam = e)) > 0:
+				if len(ChosenAnswer.objects.active().filter(question__exam = e, student = request.user)) > 0:
 					e.completed = True
 				else:
 					e.completed = False
-					if not e.activated: exams.exclude(id = e.id)
-
 			return render_to_response('courses/detail-student.html', context=RequestContext(request, locals()))
 
 

@@ -53,7 +53,6 @@
        </div>
 
     <script type="text/javascript">
-
         $(document).ready(function(){
 
             var answers=[];
@@ -136,6 +135,20 @@
             });
 
             $("#save").click(save_questions);
+
+            $(window).on('beforeunload', function(){
+                return "Salir del examen hará que se suban tus respuestas.";
+            });
+
+            $(window).unload(function(){
+                setTimeout(function(){
+                    over = true;
+                    $("#save").trigger('click');
+                    return "Se subió el examen";
+                },1000);
+
+            });
         });
+
     </script>
 {% endblock %}

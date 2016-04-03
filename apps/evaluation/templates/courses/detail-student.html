@@ -22,25 +22,27 @@
                 {% if exams %}
                     <ul class="list-group">
                     {% for e in exams %}
-                        <li class="list-group-item">
-                            <div class="row">
-                                <div class="col-md-8">
-                                   {{ e.name }}
-                                </div>
-                                <div class="col-md-4">
-                                    {% if e.completed %}
-                                        <a href="{% url 'examenes:results' e.id %}" class="btn btn-default">
-                                            Ver resultados
-                                        </a>
-                                    {% else %}
-                                        <a href="{% url 'examenes:view' e.id %}" class="btn btn-primary">
-                                            Contestar
-                                        </a>
-                                    {% endif %}
+                        {% if e.activated %}
+                             <li class="list-group-item">
+                                <div class="row">
+                                    <div class="col-md-8">
+                                       {{ e.name }}
+                                    </div>
+                                    <div class="col-md-4">
+                                        {% if e.completed %}
+                                            <a href="{% url 'examenes:results' e.id %}" class="btn btn-default">
+                                                Ver resultados
+                                            </a>
+                                        {% else %}
+                                            <a href="{% url 'examenes:view' e.id %}" class="btn btn-primary">
+                                                Contestar
+                                            </a>
+                                        {% endif %}
 
+                                    </div>
                                 </div>
-                            </div>
-                        </li>
+                             </li>
+                        {% endif %}
                     {% endfor %}
                     </ul>
                 {% else %}

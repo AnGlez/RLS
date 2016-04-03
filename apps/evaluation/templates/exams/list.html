@@ -54,16 +54,14 @@
                                     {{ exam.name }}
                                 </td>
                                 <td>
-                                    {{ exam.unit }}
+                                    <a href="{% url 'unidades:create' exam.unit.id %}">
+                                        {{ exam.unit }}
+                                    </a>
                                 </td>
                                 <td>
-                                    {% if request.user.is_staff %}
-                                         <a href="{% url 'conceptos:ordenar' exam.unit.course.id%}">
-                                            {{ exam.unit.course }}
-                                        </a>
-                                        {% else %}
+                                    <a href="{% url 'cursos:view' exam.unit.course.id %}">
                                         {{ exam.unit.course }}
-                                    {% endif %}
+                                    </a>
                                 </td>
                                 <td>
                                 {% if request.user.is_staff %}

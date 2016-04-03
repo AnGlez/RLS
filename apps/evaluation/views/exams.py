@@ -67,7 +67,7 @@ class ListExamsView(View):
 		else:
 			exams = Exam.objects.active().filter(Q(unit__course__students=request.user))
 			for e in exams:
-				if len(ChosenAnswer.objects.active().filter(question__exam = e)) > 0:
+				if len(ChosenAnswer.objects.active().filter(question__exam = e, student = request.user)) > 0:
 					e.completed = True
 				else:
 					e.completed = False

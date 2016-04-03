@@ -1,0 +1,22 @@
+{% extends 'base/base.html' %}
+{% load static i18n widget_tweaks %}
+{% block title %} {{ unit.name }} | {{ unit.course.name }}{% endblock title %}
+{% block content %}
+    <div class="row title">
+        <div class="col-md-8">
+            <h2>{{ unit.name }} <small>{{ unit.course.name }}</small></h2>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 concept-box right">
+            <label>Conceptos de unidad</label>
+            <div>
+                {% for c in unit.concepts.all %}
+                    <div class="concept right-inverted">{{ c }}</div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+<script type="text/javascript">
+</script>
+{% endblock %}

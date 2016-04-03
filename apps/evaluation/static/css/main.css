@@ -121,21 +121,44 @@ h1{
 }
 .concept{
     display: inline-block;
-    padding: 8px;
+    padding: 7px;
     border-radius: 8px;
     font-size: 14px;
     margin-right: 2px;
+    border: solid 1px transparent;
 }
+
 .wrong{
 
     color: #a94442;
     background-color: #f2dede;
     border: solid 1px #ebccd1;
 }
+
+.wrong-inverted {
+    background-color: #a94442;
+    color: #fff;
+}
+.wrong-inverted:hover {
+    background-color: #fff;
+    color: #a94442;
+    border: solid 1px #a94442;
+    text-decoration: none;
+}
 .right{
     background-color: #d9edf7;
     border: solid 1px #bce8f1;
     color: #31708f;
+}
+.right-inverted {
+    background-color:#31708f;
+    color:#fff;
+}
+.right-inverted:hover {
+    background-color: #fff;
+    color: #31708f;
+    text-decoration: none;
+    border: solid 1px #31708f;;
 }
 .concepts{
     margin-bottom: 10px;
@@ -146,13 +169,7 @@ h1{
     margin-bottom: 20px;
     padding: 10px;
     border-radius: 5px;
-    background-color: #f2dede;
-    color: #a94442;
-    border: solid 1px #ebccd1;
-}
-.concept-box .concept{
-    background-color: #a94442;
-    color: #fff;
+
 }
 .concept-box label{
     margin-bottom: 20px;
@@ -194,4 +211,9 @@ h1{
 }
 .test{
     padding-top: 100px;
+}
+.username {
+    padding-top: 15px;
+    padding-bottom: 15px;
+    color: #777;
 }
