@@ -27,17 +27,12 @@
     {% block js_head %}{% endblock %}
 </head>
 <body>
-<nav class="navbar navbar-default navbar-static-top">
-    <ul class="nav navbar-nav">
-        <li><a href="#">Home</a></li>
-        <li><a href="{% url 'cursos:listar' %}">Cursos</a></li>
-        <li><a href="{% url 'examenes:listar' %}">Exámenes</a></li>
-    </ul>
-     <ul class="nav navbar-nav" id="logout">
-        <li><a href="{% url 'accounts:logout' %}">Cerrar sesión</a></li>
-    </ul>
+<nav class="navbar navbar-default navbar-fixed-top">
+    <div class="col-md-10"></div>
+     <div class="col-md-2">
+            <div id="DateCountdown" data-timer="10" style="width: 100%;"></div>
+        </div>
 </nav>
-
 <div class="container-fluid">
     <div class="row">
         <div class="col-xs-4 col-md-2"></div>
@@ -48,7 +43,9 @@
 </div>
 <!-- Latest compiled and minified JavaScript -->
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.9/js/jquery.dataTables.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/js/select2.min.js"></script>
+<script src ="{% static 'TimeCircles/inc/TimeCircles.js' %}"></script>
 <script type="text/javascript" src="https://rawgit.com/FezVrasta/bootstrap-material-design/master/dist/js/material.min.js"></script>
 <script type="text/javascript" src="http://momentjs.com/downloads/moment-with-locales.min.js"></script>
 <script src="{% static 'js/bootstrap-material-datetimepicker.js' %}"></script>

@@ -46,9 +46,20 @@ urlpatterns = [
 		url(r'crear/$',views.concepts.create, name="crear"), #get, post
 		url(r'^(?P<course_id>[\d]+)/editor/$',views.concepts.hierarchy,name="ordenar") #get, post
 		],namespace="conceptos")),
-	#Concept management
+
+	#Course management
 	url(r'^cursos/',include([
 		#url(r'crear/$',views.concepts.create, name="crear"), #get, post
-		url(r'^listar',views.courses.list,name="listar") #get, post
-		],namespace="cursos"))
-]
+		url(r'^$',views.courses.list,name="listar"), #get, post
+		url(r'^(?P<course_id>[\d]+)/', include([
+			url(r'^$',views.courses.view, name='view')
+		]))],namespace="cursos")),
+
+	# Unir management
+	url(r'^unidades/',include([
+		url(r'(?P<course_id>[\d]+)/', include([
+			url(r'crear/$',views.units.create, name="create"),
+		])), #get, post
+
+		],namespace="unidades"))
+ ]

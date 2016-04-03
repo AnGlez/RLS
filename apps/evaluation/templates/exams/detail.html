@@ -2,10 +2,25 @@
 {% load static i18n widget_tweaks %}
 {% block title %}{{ exam.name }}{% endblock title %}
 {% block content %}
-    <div class="row title">
     {% if messages %}
-        <div class="row alert alert-successful">{{ message }}</div>
+        <div class="row">
+            <div class="messages">
+                {% for msg in messages %}
+                    {% if msg.level_tag == 'error' %}
+                        <div class="alert alert-danger" role="alert">
+                        {% else  %}
+                        <div class="alert alert-info" role="alert">
+                    {% endif %}
+                {{msg.message}}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
     {% endif %}
+    <div class="row title">
         <div class="col-md-8 col-xs-12">
             <h2>{{ exam.name}} <small> {{ exam.unit }}</small></h2>
         </div>
@@ -17,13 +32,16 @@
            {% endif %}
        </div>
     </div>
-    <div class="">
-
-    </div>
     <div class="row">
         <label class="col-sm-2 control-label">Instrucciones</label>
         <div class="col-sm-8 control-label">
             {{ exam.instructions }}
+        </div>
+    </div>
+    <div class="row">
+        <label class="col-sm-2 control-label">Tiempo</label>
+        <div class="col-sm-8 control-label">
+            {{ exam.duration }}
         </div>
     </div>
        <!--EMPIEZA SECCION PREGUNTAS-->

@@ -13,6 +13,9 @@ class ChosenAnswer(Model):
 	answer = ForeignKey('evaluation.PossibleAnswer', related_name='chosen')
 	question = ForeignKey('evaluation.Question', related_name='section', null=True)
 
+	def __unicode__(self):
+		return self.answer.text
+
 	class Meta(object):
 		verbose_name = 'respuesta'
 		verbose_name_plural= 'respuestas'

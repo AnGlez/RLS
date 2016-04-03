@@ -56,7 +56,27 @@
             conId = $(this).attr('id').split('-')[1];
             concepts.push({"id":conId, "related":[]});
         });
+        relations = {{ linesjson|safe }};
 
+        $.each(relations, function(i,obj){
+            x1 = $('#con-'+obj.prerequisite).position().left + $('#con-'+obj.prerequisite).width();
+            y1 = $('#con-'+obj.prerequisite).position().top + $('#con-'+obj.prerequisite).height();
+            x2 = $('#con-'+obj.concept).position().left + $('#con-'+obj.concept).width();
+            y2 = $('#con-'+obj.concept).position().top + $('#con-'+obj.concept).height();
+            line = 'line-' + obj.prerequisite +'-' + obj.concept;
+
+            var newLine = document.createElementNS('http://www.w3.org/2000/svg','line');
+            newLine.setAttribute('x1',x1);
+            newLine.setAttribute('y1',y1);
+            newLine.setAttribute('x2',x2);
+            newLine.setAttribute('y2',y2);
+            newLine.setAttribute('id',line);
+            newLine.setAttribute('c1',obj.prerequisite);
+            newLine.setAttribute('c2',obj.concept);
+            newLine.setAttribute('class','line');
+
+            $("#svg").append(newLine);
+        });
         $('#save').click(function(){
 
             $(".line").each(function(){
@@ -88,7 +108,6 @@
                     window.location.replace({% url 'examenes:listar' %})
                 }
             });
-            console.log(concepts);
         });
 
         $('.concept-container').attr('style','height: '+height+"px");

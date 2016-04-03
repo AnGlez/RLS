@@ -26,18 +26,6 @@ class Model(BaseModel):
 
 	objects = ActiveManager()
 
-	def delete(self, soft = True, using = None):
-		""" Implements a soft-deletion schema in which a model may be deleted from the database or "soft-deleted",
-			hidden from public.
-			:param soft: a Boolean determining if the model should be soft-deleted or not
-			:param using: the alias of the database in which to store this model
-		"""
-
-		if soft is True:
-
-			self.active = False
-			self.save(using = using)
-		else: Model.delete(self, using = using)
 
 	class Meta(object):
 		abstract = True

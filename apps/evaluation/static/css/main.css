@@ -71,8 +71,7 @@ h1{
 .question{
     font-size: 15px;
     background-color: #f8f8f8;
-    padding-top: 15px;
-    padding-left: 10px;
+    padding: 15px;
     border-color:#e7e7e7;
 }
 .answers{
@@ -122,16 +121,16 @@ h1{
 }
 .concept{
     display: inline-block;
-    padding: 7px;
+    padding: 8px;
     border-radius: 8px;
-    font-size: 12px;
+    font-size: 14px;
     margin-right: 2px;
 }
 .wrong{
 
-    color: #8a6d3b;
-    background-color: #fcf8e3;
-    border: solid 1px #faebcc;
+    color: #a94442;
+    background-color: #f2dede;
+    border: solid 1px #ebccd1;
 }
 .right{
     background-color: #d9edf7;
@@ -141,4 +140,58 @@ h1{
 .concepts{
     margin-bottom: 10px;
     margin-top: 10px;
+}
+.concept-box{
+    margin-top: 20px;
+    margin-bottom: 20px;
+    padding: 10px;
+    border-radius: 5px;
+    background-color: #f2dede;
+    color: #a94442;
+    border: solid 1px #ebccd1;
+}
+.concept-box .concept{
+    background-color: #a94442;
+    color: #fff;
+}
+.concept-box label{
+    margin-bottom: 20px;
+}
+.course{
+    display: inline-block;
+    position: relative;
+    max-width: 250px;
+    background-color: #5bc0de;
+    color: #ffffff;
+    border-radius: 10px;
+    padding: 15px;
+    margin: 15px;
+    min-height: 150px;
+    max-height: 170px;
+}
+.course-name{
+    margin-bottom: 15px;
+    font-size: 18px;
+
+}
+.course-options{
+    position: absolute;
+    bottom: 10px;
+}
+.course-options a {
+    color: #fff;
+    display: block;
+    margin-bottom: 10px;
+}
+#students{
+    width: 100%;
+}
+#add-concept-box {
+    width: 100%;
+    border-radius: 10px;
+    border: solid 1px #e7e7e7;
+    padding: 10px;
+}
+.test{
+    padding-top: 100px;
 }

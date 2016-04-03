@@ -32,7 +32,7 @@ class Course(Model):
 	                           null = True,
 	                           blank=True
 	)
-	def __str__(self):
+	def __unicode__(self):
 		return self.name
 
 	class Meta(object):
@@ -64,7 +64,7 @@ class Unit(Model):
 	                    null= False,
 	                    verbose_name=_('curso')
 	)
-	def __str__(self):
+	def __unicode__(self):
 		return self.name
 
 	class Meta(object):

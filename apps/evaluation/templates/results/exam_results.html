@@ -4,7 +4,7 @@
 {% block content %}
     <div class="row title">
         <div class="col-md-12">
-            <h1>{{ test.name }}</h1>
+            <h2>{{ test.name }}</h2>
         </div>
     </div>
     <div class="row">
@@ -17,32 +17,30 @@
     </div>
     <hr>
     <div class="results">
+    {% if missing_concepts %}
+         <div class="concept-box">
+            <span class="glyphicon glyphicon-exclamation-sign"></span>
+            <label>Conceptos de recuperacion</label>
+            <div>
+                {% for m in missing_concepts %}
+                    <div class="concept">
+                        {{ m }}
+                    </div>
+                {% endfor %}
+            </div>
+
+        </div>
+    {% endif %}
+
         <div class="row">
             <div class="col-md-10">
                 <h3>Resumen</h3>
             </div>
         </div>
-        <div class="row  panel panel-default">
-            <div class="col-md-10 concepts concepts-missing">
-                {% for m in missing_concepts %}
-                    <div class="concept wrong">
-                        {{ m }}
-                    </div>
-                {% endfor %}
-
-            </div>
-        </div>
     {% for q in questions %}
         <div class="row">
             <div class="col-md-10 concepts">
-                {% for c in q.concepts.all %}
-                    {% if q.correct %}
-                        <span class="concept wrong">{{ c }}</span>
-                    {% else %}
-                         <span class="concept right">{{ c }}</span>
-                    {% endif %}
 
-                {% endfor %}
             </div>
         </div>
         <div class="row">
@@ -55,6 +53,18 @@
                             </div>
                             <div class="col-md-2">
                                 <span class="badge">{{ q.points }} puntos</span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12 concepts">
+                                {% for c in q.concepts.all %}
+                                    {% if q.correct %}
+                                        <span class="concept wrong">{{ c }}</span>
+                                    {% else %}
+                                         <span class="concept right">{{ c }}</span>
+                                    {% endif %}
+
+                                {% endfor %}
                             </div>
                         </div>
                     </li>

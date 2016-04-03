@@ -29,7 +29,7 @@ class Exam(Model):
 	activated = BooleanField(default=False)
 	duration = TimeField(null=True)
 
-	def __str__(self):
+	def __unicode__(self):
 		return self.name
 
 	class Meta(object):
@@ -63,8 +63,8 @@ class Question(Model):
 	                  null = True
 	                  )
 
-	def __str__(self):
-		return self.sentence.encode('utf8')
+	def __unicode__(self):
+		return self.sentence
 
 	class Meta(object):
 		verbose_name=_('pregunta')
@@ -84,15 +84,15 @@ class Concept(Model):
 
 	)
 	required_by = ManyToManyField('evaluation.Concept',
-	                         related_name='prerequisite',
+		                         related_name='prerequisite',
 	                         blank= True,
 	                         null = True
 	)
 	posX = FloatField(blank=True, null=True)
 	posY = FloatField(blank=True, null=True)
 
-	def __str__(self):
-		return self.name.encode('utf8')
+	def __unicode__(self):
+		return self.name
 
 	class Meta(object):
 		verbose_name= _('concepto')
@@ -114,8 +114,8 @@ class PossibleAnswer(Model):
 	                      )
 	correct = BooleanField(default=False)
 
-	def __str__(self):
-		return self.text.encode('utf8')
+	def __unicode__(self):
+		return self.text
 
 	class Meta(object):
 		verbose_name = _('opción')

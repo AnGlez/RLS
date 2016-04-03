@@ -27,10 +27,9 @@ __all__ = [
 class LoginView(View):
 	""" This view is in charge of authenticating users into the system and storing their data in a session
 	"""
-
 	def get(self,request):
 		# Get redirect URL
-		redirect_url = request.REQUEST.get('next', reverse_lazy('examenes:listar'))
+		redirect_url = request.REQUEST.get('next', reverse_lazy('cursos:listar'))
 
 		# Check if user has been authenticated before - if so, redirect him/her to the main site
 		if request.user is not None and request.user.is_authenticated():
@@ -44,7 +43,7 @@ class LoginView(View):
 	def post(self, request):
 
 		# Get redirect URL
-		redirect_url = request.REQUEST.get('next', reverse_lazy('examenes:listar'))
+		redirect_url = request.REQUEST.get('next', reverse_lazy('cursos:listar'))
 
 		# Check if user has been authenticated before - if so, redirect him/her to the main site
 		if request.user is not None and request.user.is_authenticated():

@@ -1,11 +1,11 @@
+# -*- coding: utf-8 -*-
+
 from __future__ import unicode_literals
 from django.shortcuts import redirect, render_to_response, RequestContext
 from apps.evaluation.models import ChosenAnswer, PossibleAnswer, Exam,Question
 from django.contrib.auth.decorators import login_required
-from django.core.urlresolvers import reverse_lazy, reverse
 from django.utils.decorators import method_decorator
 from apps.evaluation.decorators import ajax_required
-from django.http import HttpResponseForbidden
 from django.views.generic import View
 from django.http import JsonResponse
 import json

@@ -2,9 +2,24 @@
 {% load static i18n widget_tweaks %}
 {% block title %}{{ exam.name }}{% endblock title %}
 {% block content %}
-        {% if mensaje %}
-            <div class="row alert alert-successful">{{ mensaje }}</div>
-        {% endif %}
+    {% if messages %}
+        <div class="row">
+            <div class="messages">
+                {% for msg in messages %}
+                    {% if msg.level_tag == 'error' %}
+                        <div class="alert alert-danger" role="alert">
+                        {% else  %}
+                        <div class="alert alert-info" role="alert">
+                    {% endif %}
+                {{msg.message}}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
 
    <div class="row">
        <form action="{% url 'examenes:edit' exam.id %}" method="POST" class="form-horizontal">
@@ -42,6 +57,17 @@
                     {% endif %}
                </div>
            </div>
+           <div class="form-group">
+               <label class="col-sm-2 control-label">Tiempo</label>
+               <div class="col-sm-8 control-label">
+                   {{ form.duration }}
+                   {% if form.duration.errors %}
+                        {% for error in form.duration.errors %}
+                            <small class="error">{% blocktrans %}{{ error }}{% endblocktrans %}</small>
+                        {% endfor %}
+                    {% endif %}
+               </div>
+           </div>
            <!--EMPIEZA SECCION PREGUNTAS-->
            {% block lista %}
                {% include 'questions/questions.html' %}
@@ -67,12 +93,24 @@
     {% block pregunta %}
         {% include "exams/modals/add_question.html" %}
 {% endblock %}
-    <script>
+    <script type="text/javascript">
         $(document).ready(function(){
             count = 1;
+            $('#time').bootstrapMaterialDatePicker({
+                date: false,
+				shortTime: false,
+				format: 'HH:mm'
+            });
+
             $("[name='activated']").bootstrapSwitch();
+            $('#concept-select option')[0].remove();
             $('#modal-btn').click(function(e){
                 e.preventDefault();
+            });
+
+            $('#concept-select').select2({
+              placeholder: "Escribe el nombre de un concepto",
+              allowClear: false
             });
             $('#add-ans').click(function() {
                 count++;
@@ -130,9 +168,6 @@
 
                     $('#quest-container').append(question);
                 });
-            });
-            $('#concept-select').select2({
-                placeholder:'Escribe los conceptos relacionados'
             });
         });
     </script>

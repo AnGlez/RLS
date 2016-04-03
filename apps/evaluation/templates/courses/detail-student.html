@@ -1,0 +1,61 @@
+{% extends 'base/base.html' %}
+{% load static i18n widget_tweaks %}
+{% block title %} {{ course.name }}{% endblock title %}
+{% block content %}
+    <div class="row title">
+        <div class="col-md-8">
+            <h2>{{ course.name }}</h2>
+        </div>
+    </div>
+    <hr>
+    <div class="row">
+        <div class="col-md-6">
+            <!-- sección exámenes -->
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <div class="row">
+                        <div class="col-md-12">
+                             Exámenes
+                        </div>
+                    </div>
+                </div>
+                {% if exams %}
+                    <ul class="list-group">
+                    {% for e in exams %}
+                        <li class="list-group-item">
+                            <div class="row">
+                                <div class="col-md-8">
+                                   {{ e.name }}
+                                </div>
+                                <div class="col-md-4">
+                                    {% if e.completed %}
+                                        <a href="{% url 'examenes:results' e.id %}" class="btn btn-default">
+                                            Ver resultados
+                                        </a>
+                                    {% else %}
+                                        <a href="{% url 'examenes:view' e.id %}" class="btn btn-primary">
+                                            Contestar
+                                        </a>
+                                    {% endif %}
+
+                                </div>
+                            </div>
+                        </li>
+                    {% endfor %}
+                    </ul>
+                {% else %}
+                    <div class="panel-body">
+                        <p> No hay exámenes para este curso</p>
+                    </div>
+                {% endif %}
+            </div>
+        <!-- termina sección exámenes-->
+        </div>
+    </div>
+    <!--modal usuarios-->
+    {% include 'users/students.html' %}
+    {% include 'courses/add_unit.html' %}
+
+    <!--termina modal usuarios-->
+
+{% endblock %}

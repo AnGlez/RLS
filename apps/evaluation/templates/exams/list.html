@@ -12,6 +12,24 @@
             </div>
         {% endif %}
     </div>
+    {% if messages %}
+        <div class="row">
+            <div class="messages">
+                {% for msg in messages %}
+                    {% if msg.level_tag == 'error' %}
+                        <div class="alert alert-danger" role="alert">
+                        {% else  %}
+                        <div class="alert alert-info" role="alert">
+                    {% endif %}
+                {{msg.message}}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
     {% if exams %}
         <div class="table-responsive">
             <table class="table table-condensed">
@@ -40,7 +58,7 @@
                                 </td>
                                 <td>
                                     {% if request.user.is_staff %}
-                                         <a href="{% url 'conceptos:ordenar' exam.id%}">
+                                         <a href="{% url 'conceptos:ordenar' exam.unit.course.id%}">
                                             {{ exam.unit.course }}
                                         </a>
                                         {% else %}

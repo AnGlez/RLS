@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from apps.evaluation.models import Question, PossibleAnswer, Exam, Unit,Concept
 from django.shortcuts import redirect, render_to_response, RequestContext
@@ -13,7 +14,8 @@ from django.http import JsonResponse
 from django.contrib import messages
 
 __all__=[
-	'create'
+	'create',
+	'edit'
 ]
 
 class AddQuestionView(View):
@@ -91,13 +93,17 @@ class EditQuestionView(View):
 	def post(self,request,question_id=0):
 		#TODO: actualizar possible answers
 		question = Question.objects.active().get(id=question_id)
-		form = QuestionForm(request.POST,instance=question)
-		if form.is_valid():
-			question = form.instance
-			form.save()
-			mensaje = "La pregunta se actualizo correctamente"
+		question_form = QuestionForm(request.POST,instance=question)
+		if question_form.is_valid():
+			question = question_form.instance
+			question_form.save()
+			mensaje = "La pregunta se actualizó correctamente"
 			messages.add_message(request,messages.SUCCESS,mensaje)
-
 			return redirect(reverse('examenes:view',kwargs={'exam_id': question.exam.id}))
+
+		messages.add_message(request, messages.ERROR, 'Favor de llenar todos los campos')
+		question_form.fields['concepts'].queryset = question.exam.unit.concepts.all()
+		answers = PossibleAnswer.objects.active().filter(question=question)
+		return render_to_response('questions/edit.html',context = RequestContext(request, locals()),status=401)
 
 edit = EditQuestionView.as_view()

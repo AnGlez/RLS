@@ -1,0 +1,278 @@
+{% extends 'base/base.html' %}
+{% load static i18n widget_tweaks %}
+{% block title %} {{ course.name }}{% endblock title %}
+{% block content %}
+    <div class="row title">
+        <div class="col-md-8">
+            <h2>{{ course.name }}</h2>
+        </div>
+    </div>
+    <hr>
+    <div class="row">
+        <div class="col-md-6">
+        {% csrf_token %}
+        <!-- Sección alumnos-->
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <div class="row">
+                        <div class="col-md-9">
+                            Alumnos inscritos
+                        </div>
+                        <div class="col-md-3">
+                            <button data-toggle="modal" data-target="#agregarAlumno" class="btn btn-primary btn-sm">
+                                <span class="glyphicon glyphicon-plus-sign"></span>
+                                Agregar
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+                {% if students %}
+                    <ul class="list-group" id="student-list">
+                        {% for s in students %}
+                            <li class="list-group-item" id="student-{{ s.id }}">
+                                <div class="row">
+                                    <div class="col-md-4" id="name-{{ s.id }}">{{ s.username }}</div>
+                                    <div class="col-md-6"> {{ s.first_name }} {{ s.last_name }}</div>
+                                    <div class="col-md-2">
+                                        <button id="{{ s.id }}" class="remove-student btn btn-default btn-sm">
+                                            <span class="glyphicon glyphicon-remove"></span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </li>
+
+                        {% endfor %}
+
+                    </ul>
+                {% else %}
+                    <div class="panel-body">
+                        <p>No hay alumnos inscritos</p>
+                    </div>
+                {% endif %}
+            </div>
+        <!-- termina sección alumnos -->
+        </div>
+        <div class="col-md-6">
+        <!-- sección unidades -->
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <div class="row">
+                        <div class="col-md-9">
+                            Unidades        
+                        </div>
+                        <div class="col-md-3">
+                            <button data-toggle="modal" data-target="#agregarUnidad" class="btn btn-primary btn-sm">
+                                <span class="glyphicon glyphicon-plus-sign"></span>
+                                Agregar
+                            </button>
+                        </div>
+                    </div>
+                    
+                </div>
+                {% if units %}
+                    <ul class="list-group" id="unit-list">
+                        {% for u in units %}
+                            <li class="list-group-item">{{ u.name }}</li>
+                        {% endfor %}
+
+                    </ul>
+                {% else %}
+                    <div class="panel-body">
+                        <p>No hay unidades para este curso</p>
+                    </div>
+                {% endif %}
+            </div>
+        <!-- termina sección unidades-->
+
+            <!-- sección exámenes -->
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <div class="row">
+                        <div class="col-md-9">
+                             Exámenes
+                        </div>
+                        <div class="col-md-3">
+                            <a href="{% url 'examenes:crear' %}" class="btn btn-primary btn-sm">
+                                <span class="glyphicon glyphicon-plus-sign"></span>
+                                Agregar
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% if exams %}
+                    <ul class="list-group">
+                    {% for e in exams %}
+                        <li class="list-group-item">
+                            <div class="row">
+                                <div class="col-md-10">
+                                    <a href="{% url 'examenes:view' e.id %}">{{ e.name }}</a>
+                                </div>
+                                <div class="col-md-2">
+                                    <a role="button" href="{% url 'examenes:edit' e.id %}" class="btn btn-default">
+                                        <span class="glyphicon glyphicon-edit"></span>
+                                    </a>
+                                </div>
+                            </div>
+                        </li>
+                    {% endfor %}
+                    </ul>
+                {% else %}
+                    <div class="panel-body">
+                        <p> No hay exámenes para este curso</p>
+                    </div>
+                {% endif %}
+            </div>
+        <!-- termina sección exámenes-->
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    Conceptos
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <a href="{% url 'conceptos:ordenar' course.id %}" class="btn btn-primary btn-block">
+                                <span class="glyphicon glyphicon-th"></span>
+                                Editor de conceptos
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--modal usuarios-->
+    {% include 'users/students.html' %}
+    {% include 'courses/add_unit.html' %}
+
+    <!--termina modal usuarios-->
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        var csfrToken = $("input[name=csrfmiddlewaretoken]").val();
+
+        $('#students').select2({
+          placeholder: "Alumnos",
+          allowClear: true
+        });
+        $('body').on('click','.remove-student',function(){
+            var student_id = $(this).attr('id');
+            student_name = $('#name-'+student_id).text();
+            conf = confirm("¿Está seguro que quiere desinscribir a "+student_name +"?");
+            if (conf){
+                $.ajax({
+                    url: '{% url "cursos:view" course.id %}',
+                    method: 'post',
+                    data: {
+                        csrfmiddlewaretoken: csfrToken,
+                        action: 'borrar',
+                        user_ids: student_id
+                    },
+                    success:function(data){
+                        $('#student-'+student_id).remove()
+                    }
+                    }).error(function(xhr, status, error){
+                        var err = eval("(" + xhr.responseText + ")");
+                        console.log(err.Message);
+                    });
+            }
+        });
+        $('#save-students').click(function(){
+            ids = [];
+           $('select[name=students] :selected').each(function(){
+               ids.push($(this).val());
+           });
+            $.ajax({
+                url: '{% url "cursos:view" course.id %}',
+                method: 'post',
+                data: {
+                    csrfmiddlewaretoken: csfrToken,
+                    action: 'guardar',
+                    user_ids: JSON.stringify(ids)
+                },
+                success:function(users){
+                    $.each(JSON.parse(users.data.students), function(i,obj){
+                        $("#student-list").append('<li class="list-group-item" id="student-'+obj.id+'">' +
+                                '<div class="col-md-4" id="name-'+obj.id+'">'+obj.username+'</div>' +
+                                '<div class="col-md-6">'+obj.first_name+' '+obj.last_name+'</div>' +
+                                '<div class="col-md-2"> <button id="'+obj.id+'" class="remove-student btn btn-default btn-sm">' +
+                                '<span class="glyphicon glyphicon-remove"></span> </button></div> </div></li>');
+                    });
+                    $('#agregarAlumno').modal('hide');
+                }
+            }).error(function(xhr, status, error){
+                        var err = eval("(" + xhr.responseText + ")");
+                        console.log(err.Message);
+                    });
+        });
+        $("#unit-concepts").keyup(function (e) {
+            if (e.keyCode == 13) {
+                concept = $(this).val();
+                if (concept != ""){
+                    $.ajax({
+                        url: '{% url "conceptos:crear" %}',
+                        method: 'post',
+                        data: {name : concept, csrfmiddlewaretoken: csfrToken, action: 'agregar'},
+                        success: function(response){
+                            console.log(response);
+                            if (response.status == 201){
+                                $("#add-concept-box").append('<div class="concept right" id="'+response.data.id+'">'
+                                        +response.data.name+'<button type="button" class="close" id="delete-'+response.data.id+'"> ' +
+                                        '<span aria-hidden="true">&times;</span> </button></div>');
+                                $("#unit-concepts").val('');
+                            }
+                        }
+                    }).error(function(xhr, status, error){
+                        var err = eval("(" + xhr.responseText + ")");
+                        console.log(err.Message);
+                    });
+                }
+            }
+        });
+        $('body').on('click','.close',function(){
+            id_delete = $(this).attr('id').split('-')[1];
+            $.ajax({
+                url: '{% url "conceptos:crear" %}',
+                method: 'post',
+                data: {id : id_delete, csrfmiddlewaretoken: csfrToken, action: 'borrar'},
+                success: function(response){
+                    console.log(response);
+                    if (response.status == 201){
+                        $('#'+id_delete).remove();
+                    }
+                }
+            }).error(function(xhr, status, error){
+                var err = eval("(" + xhr.responseText + ")");
+                console.log(err.Message);
+            });
+        });
+        $("#saveUnit").click(function(){
+            concepts = [];
+           $("#add-concept-box .concept").each(function(){
+               concepts.push($(this).attr('id'));
+           });
+            name = $('input[name=name]').val();
+            if (name != "" && concepts.length > 0){
+                $.ajax({
+                   url: '{% url "unidades:create" course.id %}',
+                    method: 'post',
+                    data: {
+                        name: name,
+                        concepts: JSON.stringify(concepts),
+                        csrfmiddlewaretoken: csfrToken
+                    },
+                    success:function(response){
+                        if (response.status == 201){
+                            $('#unit-list').append('<li class="list-group-item">'+response.data.name+'</li>');
+                        }
+                        $("#agregarUnidad").hide();
+                    }
+                }).error(function(xhr, status, error){
+                var err = eval("(" + xhr.responseText + ")");
+                console.log(err.Message);
+            });
+            }
+        })
+    });
+</script>
+{% endblock %}

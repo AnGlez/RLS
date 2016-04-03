@@ -1,18 +1,23 @@
-{% extends 'base/base.html' %}
+{% extends 'base/base_test.html' %}
 {% load static i18n widget_tweaks %}
 {% block title %}{{ exam.name }}{% endblock title %}
 {% block content %}
-   <div class="row">
+   <div class="row test">
        <div class="col-md-8 col-xs-12 title">
            <h1>{{ exam.name }} <small>{{ exam.unit }}</small></h1>
        </div>
        <div class="col-md-4 col-xs-6">{{ form.activated }}</div>
-       <div class="col-sm-10">
-           <blockquote>
-               <p>{{ exam.instructions }}</p>
-           </blockquote>
-       </div>
    </div>
+    <div class="row">
+        <div class="col-md-12">
+               {% if exam.instructions %}
+                    <div class="alert alert-info">
+                        <span class="glyphicon glyphicon-pushpin"></span>
+                         {{ exam.instructions }}
+                    </div>
+               {% endif %}
+           </div>
+    </div>
    <!--empieza examen-->
        <div class="test-questions">
        {% csrf_token %}
@@ -47,25 +52,38 @@
            </div>
        </div>
 
-    <script>
+    <script type="text/javascript">
+
         $(document).ready(function(){
+
             var answers=[];
             var csfrToken = $("input[name=csrfmiddlewaretoken]").val();
             var numQuestions = $('.question-wrapper').length;
+            var over = false;
 
-            $("#save").click(function(){
+            function save_questions(){
+
+                $("#DateCountdown").end().fadeOut();
+
                 $('input[type=radio]:checked').each(function(){
                    question = $(this).attr('name').split('-')[1];
                     answer = $(this).val();
                     answers.push({"q_id":question, "a_id": answer});
                 });
-                if (numQuestions > $('input[type=radio]:checked').length){
-                    unanswered = $('input[type=radio]:checked').length - numQuestions;
-                    continuar =confirm('No has contestado '+ unanswered + ' preguntas. Deseas continuar?');
-                    if (!continuar){
+
+                if (!over){
+                    if (numQuestions > $('input[type=radio]:checked').length){
+                        unanswered = numQuestions - $('input[type=radio]:checked').length;
+                        msg = 'No has contestado '+ unanswered + ' preguntas. ¿Deseas continuar?';
+                    } else {
+                        msg = '¿Seguro que deseas terminar el examen?';
+                    }
+                    continuar =confirm(msg);
+                    if (!continuar && !over){
                         return false;
                     }
                 }
+
                 $.ajax({
                    url: '{% url 'examenes:responder'%}',
                     method:'POST',
@@ -79,8 +97,45 @@
                 }).error(function(xhr, status, error){
                         var err = eval("(" + xhr.responseText + ")");
                         console.log(err.Message);
-                    });
+                 });
+            }
+
+            $("#DateCountdown").TimeCircles({
+                "animation": "smooth",
+                "bg_width": 1.2,
+                "fg_width": 0.1,
+                "circle_bg_color": "#60686F",
+                "time": {
+                    "Days": {
+                        "text": "",
+                        "color": "#FFCC66",
+                        "show": false
+                    },
+                    "Hours": {
+                        "text": "",
+                        "color": "#99CCFF",
+                        "show": true
+                    },
+                    "Minutes": {
+                        "text": "",
+                        "color": "#BBFFBB",
+                        "show": true
+                    },
+                    "Seconds": {
+                        "text": "",
+                        "color": "#FF9999",
+                        "show": true
+                    }
+                }
+            }).addListener(function(u,v,t){
+                if (t == 0) {
+                    over = true;
+                    alert("El tiempo para responder el examen se agotó");
+                    $("#save").trigger('click');
+                }
             });
+
+            $("#save").click(save_questions);
         });
     </script>
 {% endblock %}

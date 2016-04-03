@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from __future__ import unicode_literals
 from django.shortcuts import redirect, render_to_response, RequestContext
 from apps.evaluation.models import Exam,Unit,Question,PossibleAnswer, ChosenAnswer
@@ -8,7 +10,7 @@ from apps.evaluation.forms import ExamForm, QuestionForm
 from django.http import HttpResponseForbidden
 from django.views.generic import View
 from django.db.models import Q
-
+from django.contrib import messages
 
 __all__ = [
 	'create',
@@ -40,8 +42,12 @@ class CreateExamView(View):
 		if form.is_valid():
 			exam = form.instance
 			form.save()
+			mensaje = "El examen '"+exam.name+"' fue agregado exitosamente"
+			messages.add_message(request,messages.SUCCESS,mensaje)
 			return redirect(reverse_lazy('examenes:listar'))
 
+		mensaje = "Favor de llenar todos los campos"
+		messages.add_message(request,messages.ERROR,mensaje)
 		return render_to_response('exams/create.html',
 			context = RequestContext(request, locals()),
 			status = 401
@@ -89,6 +95,7 @@ class ViewExamView(View):
 				question_form = QuestionForm()
 				return render_to_response('exams/detail.html',context = RequestContext(request, locals()))
 			else:
+				time = int(exam.duration.hour) * 3600 + int(exam.duration.minute) * 60 + int(exam.duration.second)
 				return render_to_response('exams/student_test.html',context = RequestContext(request, locals()))
 
 
@@ -129,9 +136,12 @@ class EditExamView(View):
 		if form.is_valid():
 			exam = form.instance
 			form.save()
-			mensaje = 'El examen se actualizo correctamente'
+			mensaje = "El examen se actualizó correctamente"
+			messages.add_message(request,messages.SUCCESS,mensaje)
 			return redirect(reverse('examenes:view',kwargs={'exam_id': exam.id}))
 
+		mensaje = "Favor de llenar todos los campos"
+		messages.add_message(request,messages.ERROR,mensaje)
 		return render_to_response('exams/edit.html',context = RequestContext(request, locals()),status=401)
 
 edit = EditExamView.as_view()
