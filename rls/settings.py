@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 from django.utils.translation import ugettext_lazy as _
 from os.path import dirname, abspath, join
+import dj_database_url
 
 BASE_DIR = dirname(dirname(dirname(abspath(__file__))))
 
@@ -74,7 +75,13 @@ DATABASES = {
         'HOST': 'localhost',
         'NAME': 'rls',
         'USER': 'rls_user',
-        'PASSWORD': 'rlsuser'
+        'PASSWORD': 'rlsuser',
+        'TEST': {
+            'HOST': 'localhost',
+            'NAME': 'rls_test',
+            'USER': 'rls_user',
+            'PASSWORD': 'rlsuser'
+        }
     }
 }
 

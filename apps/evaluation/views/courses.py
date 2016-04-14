@@ -18,9 +18,17 @@ __all__=[
 ]
 
 class ListCourseView(View):
+	""" This view displays the list of courses that students or teachers are enrolled in (or teach)
+	"""
 
 	@method_decorator(login_required)
 	def get(self,request):
+		"""
+		This method obtains the courses an instructor teaches or that a student takes
+		and renders the view that shows them
+		:param request:
+		:return rendered template:
+		"""
 		if request.user.is_staff:
 			courses = Course.objects.active().filter(teacher=request.user)
 		else:
@@ -31,9 +39,20 @@ class ListCourseView(View):
 list = ListCourseView.as_view()
 
 class ViewCourseView(View):
-
+	""" This view displays the course's detail info: units, exams and students enrolled
+		The information shown depends on the user's role. Teacher can see all the course's related data
+		while students can only see the exams assigned to it.
+	"""
 	@method_decorator(login_required)
 	def get(self, request, course_id):
+		"""
+		This method obtains every unit related to the course. If the user's role is staff (teacher) the students enrolled
+		the students variable contains only the students enrolled in the course while the users variable contains all the users
+		stored in the database excluding the ones that are already enrolled. This helps teacher add more students
+		:param request:
+		:param course_id:
+		:return rendered page:
+		"""
 
 		course = Course.objects.active().get(id=course_id)
 		units = Unit.objects.active().filter(course=course)
@@ -58,7 +77,13 @@ class ViewCourseView(View):
 	@method_decorator(login_required)
 	@method_decorator(ajax_required)
 	def post(self,request,course_id):
+		"""
+		This method is in charge of enrolling or deleting users from a course
 
+		:param request:
+		:param course_id:
+		:return JSONResponse:
+		"""
 		course = Course.objects.active().get(id=course_id)
 		action = request.POST['action']
 

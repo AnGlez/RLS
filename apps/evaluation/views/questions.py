@@ -20,6 +20,9 @@ __all__=[
 
 class AddQuestionView(View):
 
+	""" This view handles question registry via ajax requests
+
+	"""
 	@method_decorator(login_required)
 	@method_decorator(ajax_required)
 	def get(self,request):
@@ -32,26 +35,18 @@ class AddQuestionView(View):
 				'data': { 'questions': questions }
 			}, status = 201)
 
-	def validate(self, data, ex):
-		errores = []
-		if data['sentence'] is None: errores.append('La pregunta no puede ser nula')
-		if data['points'] < 0 : errores.append('Las preguntas no deben tener puntaje negativo')
-		if Question.objects.active().filter(sentence__iexact = data['sentence'], exam=ex).exists():
-			errores.append('Ya existe esta pregunta en el examen')
-
-		return errores
 
 	@method_decorator(login_required)
 	@method_decorator(ajax_required)
 	@method_decorator(csrf_protect)
 	def post(self,request):
-		#TODO: Validar que las respuestas no sean nulas, que haya una respuesta correcta, que las respuestas no se repitan
-
+		""" This makes the exam persistent as well as its options
+		:param request:
+		:return JsonResponse:
+		"""
 		ex = Exam.objects.active().get(id=request.POST['exam'])
-		errores = self.validate(request.POST,ex)
 		q = Question(
 			sentence = request.POST['sentence'],
-			points = request.POST['points'],
 			exam = ex
 		)
 		q.save()
@@ -68,15 +63,22 @@ class AddQuestionView(View):
 		return JsonResponse({
 				'version': '1.0.0',
 				'status': 201,
-				'data': { 'sentence': q.sentence, 'id':q.id, 'points':q.points }
+				'data': { 'sentence': q.sentence, 'id':q.id}
 			}, status = 201)
 
 create = AddQuestionView.as_view()
 
 class EditQuestionView(View):
-
+	""" This view handles question edition as well as possible answer edition.
+	"""
 	@method_decorator(login_required)
 	def get(self,request,question_id=0):
+		"""
+		Renders question form with its possible answers so they can be updated too
+		:param request:
+		:param question_id:
+		:return:
+		"""
 		if not request.user.is_staff:
 			return HttpResponseForbidden()
 
@@ -91,7 +93,12 @@ class EditQuestionView(View):
 
 	@method_decorator(login_required)
 	def post(self,request,question_id=0):
-		#TODO: actualizar possible answers
+		"""
+		This validates and makes the changes done by the user persistent and then renders the Exam view page
+		:param request:
+		:param question_id:
+		:return rendered template:
+		"""
 		question = Question.objects.active().get(id=question_id)
 		question_form = QuestionForm(request.POST,instance=question)
 		if question_form.is_valid():

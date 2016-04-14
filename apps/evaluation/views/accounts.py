@@ -26,6 +26,7 @@ __all__ = [
 
 class LoginView(View):
 	""" This view is in charge of authenticating users into the system and storing their data in a session
+		The authentication determines the user's role
 	"""
 	def get(self,request):
 		# Get redirect URL
@@ -69,12 +70,13 @@ class LoginView(View):
 login = LoginView.as_view()
 
 class LogoutView(View):
-
+	"""
+		This view is in charge of destroying session variables when the user is finished using the system
+	"""
 	@method_decorator(login_required)
 	def get(self, request):
 
-		user = request.user
-		# Proceed to log out the user
+		# log out the user
 		logout_from_site(request)
 		return redirect(reverse_lazy('accounts:login'))
 

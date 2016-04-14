@@ -15,16 +15,10 @@ __all__ = [
 ]
 
 class CreateUnitView(View):
-
-	@method_decorator(login_required)
-	def get(self, request,course_id):
-
-		unit = Unit.objects.active().get(id = course_id)
-
-		return render_to_response('courses/view-unit.html', context=RequestContext(request,locals()))
-
-	@method_decorator(login_required)
-	@method_decorator(ajax_required)
+	""" This view handles unit creation along with its related concepts
+		Every concept is previously created so the request contains a list of the existing concepts' ids
+		and they are stored as the unit's related concepts
+	"""
 
 	def post(self, request,course_id):
 		#TODO: validar

@@ -56,8 +56,6 @@ class Question(Model):
 	                           null=True
 	)
 
-	points = PositiveSmallIntegerField(blank = False)
-
 	exam = ForeignKey('evaluation.Exam',
 	                  related_name='exam',
 	                  null = True

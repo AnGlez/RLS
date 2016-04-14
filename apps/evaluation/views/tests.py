@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import unicode_literals
-from django.shortcuts import redirect, render_to_response, RequestContext
+from django.shortcuts import render_to_response, RequestContext
 from apps.evaluation.models import ChosenAnswer, PossibleAnswer, Exam,Question
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
@@ -16,7 +16,9 @@ __all__=[
 ]
 
 class AnswerTestView(View):
-
+	""" This view handles the test submission performed by students.
+		This view is called via AJAX requests, answers are received in JSON format and then stored in the database
+	"""
 	@method_decorator(login_required)
 	@method_decorator(ajax_required)
 	def post(self,request):
@@ -46,16 +48,13 @@ class ViewResultsView(View):
 		test = Exam.objects.active().get(id = exam_id)
 		questions = Question.objects.active().filter(exam =test)
 		correct_count = 0
-		points = 0
 		total = 0
 		missing_concepts = []
 
 		for q in questions:
 			q.ans = ChosenAnswer.objects.active().filter(question = q, student=request.user)
-			total+=q.points
 			if len(q.ans) > 0 and q.ans[0].answer.correct:
 				correct_count+=1
-				points+=q.points
 			else:
 				missing_concepts.extend(q.concepts.all())
 				q.correct = PossibleAnswer.objects.filter(question = q, correct = True)

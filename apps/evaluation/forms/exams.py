@@ -32,10 +32,8 @@ class QuestionForm(Form):
 		fields = [
 			'sentence',
 			'concepts',
-			'points',
 		]
 		widgets = {
 			'sentence':TextInput(attrs={'placeholder':'Escribe el enunciado de la pregunta','class':'form-control','required':'required'}),
 			'concepts':Select2MultipleWidget(attrs={'id':'concept-select','style':'width:100%','required':'required','placeholder':'Escribe un concepto'}),
-			'points':NumberInput(attrs={'placeholder':'Puntos','class':'form-control','required':'required'}),
 		}

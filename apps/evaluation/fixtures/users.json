@@ -1,0 +1,12 @@
+[
+  {
+    "pk": 1,
+    "model":"django.contrib.auth.models",
+    "fields": {
+      "username":"teacher",
+      "password" : "asdfgh",
+      "is_staff" : true
+    }
+
+  }
+]

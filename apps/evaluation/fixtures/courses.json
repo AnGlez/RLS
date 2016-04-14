@@ -4,8 +4,10 @@
     "model":"evaluation.Course",
     "fields":{
       "active":true,
-      "name": "Fundamentos de programación",
-      "code": "abc"
+      "name": "Fundamentos de programacion",
+      "code": "abc",
+      "teacher_id" : 1
+
     }
   }
 ]

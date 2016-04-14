@@ -150,7 +150,6 @@
                             csrfmiddlewaretoken: csfrToken,
                             answers: ans,
                             sentence:$('input[name=sentence]').val(),
-                            points: $('input[name=points]').val(),
                             exam:{{ exam.id }},
                             correct_answer:ans[correct]
                         }
@@ -161,8 +160,7 @@
                     $('#agregarPregunta').modal('hide');
                     question = '<div class="col-md-11"><button type="button" class="list-group-item" data-toggle="collapse" ' +
                             'data-target="#q-'+response.data.id+'" aria-expanded="false" aria-controls="q-'+
-                            response.data.id+'">' + response.data.sentence +'<span class="badge">'+
-                            response.data.points+' puntos </span> </button></div>' +
+                            response.data.id+'">' + response.data.sentence +'</button></div>' +
                             '<div class="col-md-1"> <a class="btn btn-primary btn-block" href="">' +
                             '<span class="glyphicon glyphicon-edit"></span> </a> </div>';
 

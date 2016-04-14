@@ -1,6 +1,6 @@
 {% extends 'base/base.html' %}
 {% load static i18n widget_tweaks %}
-{% block title %}{{ exam.name }}{% endblock title %}
+{% block title %}{{ exam.name }} | {{ exam.unit.name }}{% endblock title %}
 {% block content %}
     {% if messages %}
         <div class="row">

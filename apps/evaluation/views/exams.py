@@ -24,6 +24,11 @@ class CreateExamView(View):
 	"""
 	@method_decorator(login_required)
 	def get(self,request):
+		"""
+		Renders the exam form and obtains active units to populate the form
+		:param request:
+		:return:
+		"""
 		if not request.user.is_staff:
 			return HttpResponseForbidden()
 		form = ExamForm()
@@ -33,7 +38,11 @@ class CreateExamView(View):
 
 	@method_decorator(login_required)
 	def post(self,request):
-
+		"""
+		Validates and saves exam instance
+		:param request:
+		:return rendered template:
+		"""
 		if not request.user.is_staff:
 			return HttpResponseForbidden()
 

@@ -27,9 +27,6 @@
                     <div class="col-md-10">
                         {{ p.sentence }}
                     </div>
-                    <div class="col-md-2">
-                        <span class="badge">{{ p.points }} puntos</span>
-                    </div>
                 </div>
                 <ul class="answers">
                 {% for a in p.answers %}
@@ -136,9 +133,6 @@
 
             $("#save").click(save_questions);
 
-            $(window).on('beforeunload', function(){
-                return "Salir del examen hará que se suban tus respuestas.";
-            });
 
             $(window).unload(function(){
                 setTimeout(function(){

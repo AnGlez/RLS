@@ -10,52 +10,8 @@
     <hr>
     <div class="row">
         <div class="col-md-6">
-        {% csrf_token %}
-        <!-- Sección alumnos-->
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <div class="row">
-                        <div class="col-md-9">
-                            Alumnos inscritos
-                        </div>
-                        <div class="col-md-3">
-                            <button data-toggle="modal" data-target="#agregarAlumno" class="btn btn-primary btn-sm">
-                                <span class="glyphicon glyphicon-plus-sign"></span>
-                                Agregar
-                            </button>
-                        </div>
-                    </div>
-
-                </div>
-                {% if students %}
-                    <ul class="list-group" id="student-list">
-                        {% for s in students %}
-                            <li class="list-group-item" id="student-{{ s.id }}">
-                                <div class="row">
-                                    <div class="col-md-4" id="name-{{ s.id }}">{{ s.username }}</div>
-                                    <div class="col-md-6"> {{ s.first_name }} {{ s.last_name }}</div>
-                                    <div class="col-md-2">
-                                        <button id="{{ s.id }}" class="remove-student btn btn-default btn-sm">
-                                            <span class="glyphicon glyphicon-remove"></span>
-                                        </button>
-                                    </div>
-                                </div>
-                            </li>
-
-                        {% endfor %}
-
-                    </ul>
-                {% else %}
-                    <div class="panel-body">
-                        <p>No hay alumnos inscritos</p>
-                    </div>
-                {% endif %}
-            </div>
-        <!-- termina sección alumnos -->
-        </div>
-        <div class="col-md-6">
         <!-- sección unidades -->
-            <div class="panel panel-default">
+            <div class="panel panel-default element-container">
                 <div class="panel-heading">
                     <div class="row">
                         <div class="col-md-9">
@@ -68,25 +24,43 @@
                             </button>
                         </div>
                     </div>
-                    
                 </div>
+                <ul class="list-group" id="unit-list">
                 {% if units %}
-                    <ul class="list-group" id="unit-list">
                         {% for u in units %}
-                            <li class="list-group-item">{{ u.name }}</li>
+                            <li class="list-group-item">
+                                <a href="{% url 'unidades:view' u.id %}">
+                                    {{ u.name }}
+                                </a>
+                            </li>
                         {% endfor %}
 
-                    </ul>
                 {% else %}
-                    <div class="panel-body">
+                    <div class="panel-body no-units">
                         <p>No hay unidades para este curso</p>
                     </div>
                 {% endif %}
+                </ul>
             </div>
         <!-- termina sección unidades-->
-
-            <!-- sección exámenes -->
+        <!-- editor de conceptos -->
             <div class="panel panel-default">
+                <div class="panel-heading">
+                    Conceptos
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <a href="{% url 'conceptos:ordenar' course.id %}" class="btn btn-primary btn-block">
+                                <span class="glyphicon glyphicon-th"></span>
+                                Editor de conceptos
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- sección exámenes -->
+            <div class="panel panel-default element-container">
                 <div class="panel-heading">
                     <div class="row">
                         <div class="col-md-9">
@@ -100,6 +74,7 @@
                         </div>
                     </div>
                 </div>
+
                 {% if exams %}
                     <ul class="list-group">
                     {% for e in exams %}
@@ -124,21 +99,52 @@
                 {% endif %}
             </div>
         <!-- termina sección exámenes-->
-            <div class="panel panel-default">
+        </div>
+            <div class="col-md-6">
+        {% csrf_token %}
+        <!-- Sección alumnos-->
+            <div class="panel panel-default element-container">
                 <div class="panel-heading">
-                    Conceptos
-                </div>
-                <div class="panel-body">
                     <div class="row">
-                        <div class="col-md-12">
-                            <a href="{% url 'conceptos:ordenar' course.id %}" class="btn btn-primary btn-block">
-                                <span class="glyphicon glyphicon-th"></span>
-                                Editor de conceptos
-                            </a>
+                        <div class="col-md-9">
+                            Alumnos inscritos
+                        </div>
+                        <div class="col-md-3">
+                            <button data-toggle="modal" data-target="#agregarAlumno" class="btn btn-primary btn-sm">
+                                <span class="glyphicon glyphicon-plus-sign"></span>
+                                Agregar
+                            </button>
                         </div>
                     </div>
+
                 </div>
+                <ul class="list-group" id="student-list">
+                {% if students %}
+
+                        {% for s in students %}
+                            <li class="list-group-item" id="student-{{ s.id }}">
+                                <div class="row">
+                                    <div class="col-md-4" id="name-{{ s.id }}">{{ s.username }}</div>
+                                    <div class="col-md-6"> {{ s.first_name }} {{ s.last_name }}</div>
+                                    <div class="col-md-2">
+                                        <button id="{{ s.id }}" class="remove-student btn btn-default btn-sm">
+                                            <span class="glyphicon glyphicon-remove"></span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </li>
+
+                        {% endfor %}
+
+
+                {% else %}
+                    <div id="no-students">
+                        <p>No hay alumnos inscritos</p>
+                    </div>
+                {% endif %}
+                </ul>
             </div>
+        <!-- termina sección alumnos -->
         </div>
     </div>
     <!--modal usuarios-->
@@ -191,6 +197,9 @@
                     user_ids: JSON.stringify(ids)
                 },
                 success:function(users){
+                    if ( $('#no-students').length ) {
+                        $('#no-students').remove();
+                    }
                     $.each(JSON.parse(users.data.students), function(i,obj){
                         $("#student-list").append('<li class="list-group-item" id="student-'+obj.id+'">' +
                                 '<div class="col-md-4" id="name-'+obj.id+'">'+obj.username+'</div>' +
@@ -263,9 +272,14 @@
                     },
                     success:function(response){
                         if (response.status == 201){
-                            $('#unit-list').append('<li class="list-group-item">'+response.data.name+'</li>');
+                            $('#unit-list').append('<li class="list-group-item">' +
+                                    '<a href="unidades/'+response.data.id+'">'+ response.data.name+'</a> </li>');
+                            if ( $("#no-units").length ) {
+                                $("#no-units").remove();
+                            }
+                            $("#agregarUnidad").modal('hide');
                         }
-                        $("#agregarUnidad").hide();
+
                     }
                 }).error(function(xhr, status, error){
                 var err = eval("(" + xhr.responseText + ")");

@@ -15,6 +15,7 @@ urlpatterns = [
 	url(r'^grappelli/', include('grappelli.urls')), # grappelli URLS
 	url(r'^admin/', include(admin.site.urls)), # admin site
 
+	url(r'^$',views.courses.list, name='home'),
 	#Login and logout
 	url(r'^accounts/',include([
 		url(r'^login/$', views.accounts.login, name = 'login'),
@@ -60,6 +61,9 @@ urlpatterns = [
 		url(r'(?P<course_id>[\d]+)/', include([
 			url(r'crear/$',views.units.create, name="create"),
 		])), #get, post
+		url(r'(?P<unit_id>[\d]+)/', include([
+			url(r'^$', views.reports.view, name="view")
+		]))
+		],namespace="unidades")),
 
-		],namespace="unidades"))
  ]
