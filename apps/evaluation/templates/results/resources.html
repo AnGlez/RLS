@@ -1,0 +1,43 @@
+{% extends 'base/base.html' %}
+{% load static i18n widget_tweaks %}
+{% block title %}Recursos de recuperación | {{ course.name }}{% endblock title %}
+{% block content %}
+    <div class="header">
+        <div class="row title">
+            <div class="col-md-12">
+                <h2>Recursos de recuperación <small>{{ course.name }}</small></h2>
+            </div>
+        </div>
+        <div class="alert alert-info">
+            <span class="glyphicon glyphicon-info-sign"></span>
+            ¡Revisa cada uno de los recursos para recuperar conocimientos!
+        </div>
+    </div>
+
+    <div class="resource-container">
+    {% if paths %}
+        <ul class="resource-list">
+        {% for concept in paths %}
+            {% if concept.main.resource %}
+                <li class="parent-concept"><a href="{{ concept.main.resource }}">{{ concept.name }}</a></li>
+            {% else %}
+                <li class="parent-concept no-resource">{{ concept.name }}</li>
+            {% endif %}
+            {% if concept.children %}
+                <ul class="resource-sub">
+                {% for child in concept.children %}
+                    {% if child.resource %}
+                        <li class="secondary-concept"><a href="{{ child.resource }}">{{ child.name }}</a></li>
+                    {% else %}
+                        <li class="secondary-concept no-resource">{{ child.name }}</li>
+                    {% endif %}
+                {% endfor %}
+                </ul>
+            {% endif %} 
+        {% endfor %}
+        </ul>
+    {% endif %}
+
+
+    </div>
+{% endblock %}

@@ -45,7 +45,8 @@ urlpatterns = [
 	#Concept management
 	url(r'^conceptos/',include([
 		url(r'crear/$',views.concepts.create, name="crear"), #get, post
-		url(r'^(?P<course_id>[\d]+)/editor/$',views.concepts.hierarchy,name="ordenar") #get, post
+		url(r'^(?P<course_id>[\d]+)/editor/$',views.concepts.hierarchy,name="ordenar"), #get, post
+		url(r'^recurso/$',views.concepts.resource, name = "recurso")
 		],namespace="conceptos")),
 
 	#Course management
@@ -53,7 +54,8 @@ urlpatterns = [
 		#url(r'crear/$',views.concepts.create, name="crear"), #get, post
 		url(r'^$',views.courses.list,name="listar"), #get, post
 		url(r'^(?P<course_id>[\d]+)/', include([
-			url(r'^$',views.courses.view, name='view')
+			url(r'^$',views.courses.view, name='view'),
+			url(r'^recursos',views.concepts.resource_path, name="recursos")
 		]))],namespace="cursos")),
 
 	# Unir management
@@ -65,5 +67,4 @@ urlpatterns = [
 			url(r'^$', views.reports.view, name="view")
 		]))
 		],namespace="unidades")),
-
  ]

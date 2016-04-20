@@ -20,3 +20,4 @@ class ChosenAnswer(Model):
 		verbose_name = 'respuesta'
 		verbose_name_plural= 'respuestas'
 		app_label='evaluation'
+

@@ -19,35 +19,38 @@
     <link rel="stylesheet" href="{% static 'bootstrap-switch-master/dist/css/bootstrap3/bootstrap-switch.css' %}"/>
     <link href="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/css/select2.min.css" rel="stylesheet"/>
     <link rel="stylesheet" href="{% static 'TimeCircles/inc/TimeCircles.css' %}"/>
+    <link rel="stylesheet" href="{% static 'css/bootstrap-material-datetimepicker.css' %}">
     <script src="{% static 'js/jquery-2.2.1.min.js' %}"></script>
     <script src="{% static 'bootstrap-switch-master/dist/js/bootstrap-switch.js' %}"></script>
     <script src="{% static 'js/interact.min.js' %}"></script>
+
     {% block js_head %}{% endblock %}
 </head>
 <body>
 <nav class="navbar navbar-default navbar-static-top">
     <ul class="nav navbar-nav">
-        <li><a href="#">Home</a></li>
-        <li><a href="#">Cursos</a></li>
+        <li><a href="{% url 'cursos:listar' %}">Cursos</a></li>
         <li><a href="{% url 'examenes:listar' %}">Exámenes</a></li>
     </ul>
      <ul class="nav navbar-nav" id="logout">
-        <li><a href="{% url 'accounts:logout' %}">Cerrar sesión</a></li>
+         <p class="navbar-text">¡Hola {{ request.user.first_name }}!</p>
+        <li>
+            <a href="{% url 'accounts:logout' %}">
+                Cerrar sesión
+            </a>
+        </li>
     </ul>
 </nav>
 
 <div class="container-fluid">
-    <div class="row">
-        <div class="col-xs-14 col-md-12">
-            {% block content %}{% endblock %}
-        </div>
-    </div>
+    {% block content %}{% endblock %}
 </div>
 <!-- Latest compiled and minified JavaScript -->
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
-<script type="text/javascript" src="https://cdn.datatables.net/1.10.9/js/jquery.dataTables.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/js/select2.min.js"></script>
-<script src ="{% static 'TimeCircles/inc/TimeCircles.js' %}"></script>
+<script type="text/javascript" src="https://rawgit.com/FezVrasta/bootstrap-material-design/master/dist/js/material.min.js"></script>
+<script type="text/javascript" src="http://momentjs.com/downloads/moment-with-locales.min.js"></script>
+<script src="{% static 'js/bootstrap-material-datetimepicker.js' %}"></script>
 {% block js_footer %}{% endblock %}
 </body>
 </html>

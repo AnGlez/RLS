@@ -84,7 +84,7 @@
                     <button type="submit" class="btn btn-primary">Guardar</button>
                 </div>
                    <div class="btn-group" role="group">
-                       <a href="{% url 'examenes:listar' %}" class="btn btn-default">Cancelar</a>
+                       <a href="{% url 'cursos:view' exam.unit.course.id %}" class="btn btn-default">Cancelar</a>
                    </div>
                </div>
         <!-- Acaba guardar/cancelar-->
@@ -139,10 +139,16 @@
                 var csfrToken = $("input[name=csrfmiddlewaretoken]").val();
                 inputs = $('#option-container').find('input[type=text]');
                 ans = [];
+                concepts = [];
                 $(inputs).each(function(){
                     ans.push($(this).val());
                 });
-                correct = $('input[name=correct]').val();
+                var selected = $.map( $('#concept-select option:selected'),
+                      function(e) {
+                          concepts.push($(e).val());
+                      });
+
+                correct = $('input[name=correct]:checked').val();
                 $.ajax({
                         url:'{% url 'preguntas:crear' %}',
                         type: 'POST',
@@ -151,7 +157,8 @@
                             answers: ans,
                             sentence:$('input[name=sentence]').val(),
                             exam:{{ exam.id }},
-                            correct_answer:ans[correct]
+                            correct_answer:ans[correct - 1],
+                            concepts: concepts
                         }
                 }).error(function(xhr, status, error){
                     var err = eval("(" + xhr.responseText + ")");

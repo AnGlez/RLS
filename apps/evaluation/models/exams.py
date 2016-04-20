@@ -1,11 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from django.utils.translation import ugettext_lazy as _
-from model_utils.managers import InheritanceManager
-from django.utils.encoding import smart_str
 from django.db.models import *
-from _base import Model, ActiveManager
-from django.contrib.auth.models import User
+from _base import Model
 
 class Exam(Model):
 	""" Representation of a unit's exam. An exam cannot be updated if it has already been answered by a student.
@@ -88,6 +85,8 @@ class Concept(Model):
 	)
 	posX = FloatField(blank=True, null=True)
 	posY = FloatField(blank=True, null=True)
+	resource = URLField(max_length=500, null=True)
+
 
 	def __unicode__(self):
 		return self.name
@@ -96,6 +95,7 @@ class Concept(Model):
 		verbose_name= _('concepto')
 		verbose_name_plural = _('conceptos')
 		app_label = 'evaluation'
+
 
 class PossibleAnswer(Model):
 	""" Possible answers for multiple choice questions. Fields:

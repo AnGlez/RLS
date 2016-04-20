@@ -47,18 +47,18 @@ class ViewResultsView(View):
 
 		test = Exam.objects.active().get(id = exam_id)
 		questions = Question.objects.active().filter(exam =test)
-		correct_count = 0
-		total = 0
+		concepts = set()
 		missing_concepts = []
-
 		for q in questions:
 			q.ans = ChosenAnswer.objects.active().filter(question = q, student=request.user)
-			if len(q.ans) > 0 and q.ans[0].answer.correct:
-				correct_count+=1
-			else:
-				missing_concepts.extend(q.concepts.all())
+			correct =  len(q.ans) > 0 and q.ans[0].answer.correct
+			concepts.update(q.concepts.all())
+			if not correct:
 				q.correct = PossibleAnswer.objects.filter(question = q, correct = True)
-
+				missing_concepts.extend(q.concepts.all())
+		count = len(concepts) - len(missing_concepts)
+		if len(concepts) > 0 : percentage = count * 100 / len(concepts)
+		else : percentage = 0
 		return render_to_response('results/exam_results.html',context=RequestContext(request,locals()))
 
 results = ViewResultsView.as_view()

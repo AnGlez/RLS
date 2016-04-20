@@ -2,22 +2,24 @@
 {% load static i18n widget_tweaks %}
 {% block title %}{{ exam.name }}{% endblock title %}
 {% block content %}
-   <div class="row test">
-       <div class="col-md-8 col-xs-12 title">
-           <h1>{{ exam.name }} <small>{{ exam.unit }}</small></h1>
-       </div>
-       <div class="col-md-4 col-xs-6">{{ form.activated }}</div>
-   </div>
-    <div class="row">
-        <div class="col-md-12">
-               {% if exam.instructions %}
-                    <div class="alert alert-info">
-                        <span class="glyphicon glyphicon-pushpin"></span>
-                         {{ exam.instructions }}
-                    </div>
-               {% endif %}
+   <div class="header-static">
+       <div class="row test">
+           <div class="col-md-8 col-xs-12 title">
+               <h1>{{ exam.name }} <small>{{ exam.unit }}</small></h1>
            </div>
-    </div>
+           <div class="col-md-4 col-xs-6">{{ form.activated }}</div>
+       </div>
+        <div class="row">
+            <div class="col-md-12">
+                   {% if exam.instructions %}
+                        <div class="alert alert-info">
+                            <span class="glyphicon glyphicon-info-sign"></span>
+                             {{ exam.instructions }}
+                        </div>
+                   {% endif %}
+               </div>
+        </div>
+   </div>
    <!--empieza examen-->
        <div class="test-questions">
        {% csrf_token %}
@@ -32,7 +34,7 @@
                 {% for a in p.answers %}
                     <li>
                         <input type="radio" class="ans" name="ans-{{ p.id }}" value="{{ a.id }}">
-                        {{ a.text }}
+                        <code>{{ a.text }}</code>
                     </li>
                 {% endfor %}
                 </ul>
@@ -88,7 +90,7 @@
                         csrfmiddlewaretoken: csfrToken
                     },
                     success:function(){
-                         window.location.replace({% url 'examenes:listar' %})
+                         window.location.replace("{% url 'examenes:results' exam.id %}")
                     }
                 }).error(function(xhr, status, error){
                         var err = eval("(" + xhr.responseText + ")");

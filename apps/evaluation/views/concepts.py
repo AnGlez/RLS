@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import unicode_literals
-from django.shortcuts import redirect, render_to_response, RequestContext
-from apps.evaluation.models import Concept,Course, Unit
+from django.shortcuts import render_to_response, RequestContext
+from apps.evaluation.models import Concept,Course, Unit, ChosenAnswer, Exam, Question
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from apps.evaluation.decorators import ajax_required
+from django.core.validators import URLValidator
 from django.http import HttpResponseForbidden
 from django.views.generic import View
 from django.http import JsonResponse
@@ -13,7 +14,9 @@ import json
 
 __all__=[
 	'create',
-	'hierarchy'
+	'hierarchy',
+	'resource',
+	'resource_path'
 ]
 
 class CreateConceptView(View):
@@ -58,6 +61,46 @@ class CreateConceptView(View):
 					}, status = 201)
 
 create = CreateConceptView.as_view()
+
+class AddResourceView(View):
+
+	@method_decorator(ajax_required)
+	def get(self,request):
+		con = Concept.objects.get(id=request.GET["id"])
+		if con.resource:
+			return JsonResponse({
+						'version': '1.0.0',
+						'status': 201,
+						'data': {'url': con.resource}
+					}, status = 201)
+		else:
+			return JsonResponse({
+						'version': '1.0.0',
+						'status': 201,
+						'data': {'url': "none"}
+					}, status = 201)
+
+	def post(self, request):
+
+		validate = URLValidator()
+		url = request.POST["resource"]
+		try:
+			validate(url)
+			con = Concept.objects.get(id=request.POST['id'])
+			con.resource = request.POST["resource"]
+			con.save()
+
+			return JsonResponse({
+						'version': '1.0.0',
+						'status': 201,
+					}, status = 201)
+		except:
+			return JsonResponse({
+						'version': '1.0.0',
+						'status': 201,
+					}, status = 400)
+
+resource = AddResourceView.as_view()
 
 class CreateHierarchyView(View):
 	""" This view is in charge of creating a concept hierarchy by displaying a concept editor
@@ -129,3 +172,35 @@ class CreateHierarchyView(View):
 		return render_to_response('concepts/hierarchy.html',context = RequestContext(request, locals()),status=401)
 
 hierarchy = CreateHierarchyView.as_view()
+
+class ViewResourcesView(View):
+
+	def get(self, request, course_id):
+
+		student = request.user
+		course = Course.objects.get(id=course_id)
+		chosen_answers = ChosenAnswer.objects.active().filter(student = student).all()
+		missing_concepts = set()
+		paths = []
+		desc = []
+
+		for c in chosen_answers: #agregar conceptos directamente incomprendidos
+			if not c.answer.correct and c.question.exam.unit.course == course:
+				missing_concepts.update(c.question.concepts.all())
+
+		for i in missing_concepts: #cada camino inicia con un concepto directamente incomprendido
+			desc.extend(i.required_by.all())
+			i.children =[]
+			for j in desc: # recorrido por amplitud
+				if j in missing_concepts: desc.remove(j)
+				for k in j.required_by.all():
+					if k not in missing_concepts and k not in desc:
+						desc.extend(k)
+
+			i.children.extend(desc)
+			paths.append(i)
+			desc[:] = []
+
+		return render_to_response('results/resources.html', context=RequestContext(request, locals()), status=201)
+
+resource_path = ViewResourcesView.as_view()

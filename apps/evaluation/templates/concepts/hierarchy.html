@@ -1,36 +1,71 @@
-{% extends 'base/base.html' %}
+{% extends 'base/base_full_width.html' %}
 {% load static i18n widget_tweaks %}
 {% block title %} Conceptos de curso {{ course }}{% endblock title %}
 {% block content %}
-    <svg id="svg">
-    </svg>
-    <div class="concept-container">
-        <div class="row">
-            <div class="col-md-8">
-                <h3>{{ course }}</h3>
+    <div id="toggle-bar" style="display:none" class="toggle-bar">
+        <div id="bar-wrapper">
+             <button type="button" class="close" data-dismiss="toggle-bar" aria-label="Close" id="close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            <div id="concept-name"></div>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-md-11">
+                        <input type="text" id="resource-link" class="form-control" placeholder="Link al recurso">
+                    </div>
+                </div>
             </div>
-            <div class="col-md-4">
-                <button class="btn btn-primary btn-block add-btn" id="save">Guardar</button>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-md-10">
+                        <button class="btn btn-default" id="toggle-button">Agregar</button>
+                    </div>
+                </div>
+            </div>
+            <div class="bar-message"></div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-10 col-md-offset-1">
+            <svg id="svg"></svg>
+            <div class="concept-container">
+                <div class="header">
+                    <div class="row title">
+                        <div class="col-md-8">
+                            <h3>{{ course }}</h3>
+                        </div>
+                        <div class="col-md-4">
+                            <button class="btn btn-primary btn-block add-btn" id="save">Guardar</button>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="alert alert-info">
+                                <span class="glyphicon glyphicon-info-sign"></span>
+                                Da doble click en el concepto principal, luego da click en su derivado
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% csrf_token %}
+                <div class="wrapper">
+                    {% for c in concepts %}
+                        <div id="con-{{ c.id }}" class="draggable concept-pill"
+                                {% if c.posX %}
+                                    data-x="{{ c.posX }}" data-y="{{ c.posY }}"
+                                    style="transform: translate({{ c.posX }}px, {{ c.posY }}px);">
+                                {% endif %}
+                            <p id="con-name">{{ c.name }}</p>
+                        </div>
+                    {% endfor %}
+                </div>
             </div>
         </div>
-    {% csrf_token %}
-    {% for c in concepts %}
-        <div id="con-{{ c.id }}" class="draggable concept-pill"
-                {% if c.posX %}
-                    data-x="{{ c.posX }}" data-y="{{ c.posY }}"
-                    style="transform: translate({{ c.posX }}px, {{ c.posY }}px);"
-                {% endif %}
-                >
-            <p>{{ c.name }}</p>
-        </div>
-     {% endfor %}
-
     </div>
 
+
     <script>
-
         function darken(rgb) {
-
            rgb = rgb.replace('rgb(', '').replace(')', '').split(',');
             var red = $.trim(rgb[0]);
             var green = $.trim(rgb[1]);
@@ -39,32 +74,28 @@
             red = parseInt(red * (100 - darkenPercent) / 100);
             green = parseInt(green * (100 - darkenPercent) / 100);
             blue = parseInt(blue * (100 - darkenPercent) / 100);
-
             rgb = 'rgb(' + red + ', ' + green + ', ' + blue + ')';
             return rgb;
         }
-
     $(document).ready(function () {
-
         selected = 0;
         height = window.screen.availHeight;
         cArray = Array();
         concepts=[];
         lns =Array();
+        var clicked ="";
 
         $('.draggable').each(function(){
             conId = $(this).attr('id').split('-')[1];
             concepts.push({"id":conId, "related":[]});
         });
         relations = {{ linesjson|safe }};
-
         $.each(relations, function(i,obj){
             x1 = $('#con-'+obj.prerequisite).position().left + $('#con-'+obj.prerequisite).width();
             y1 = $('#con-'+obj.prerequisite).position().top + $('#con-'+obj.prerequisite).height();
             x2 = $('#con-'+obj.concept).position().left + $('#con-'+obj.concept).width();
             y2 = $('#con-'+obj.concept).position().top + $('#con-'+obj.concept).height();
             line = 'line-' + obj.prerequisite +'-' + obj.concept;
-
             var newLine = document.createElementNS('http://www.w3.org/2000/svg','line');
             newLine.setAttribute('x1',x1);
             newLine.setAttribute('y1',y1);
@@ -74,16 +105,12 @@
             newLine.setAttribute('c1',obj.prerequisite);
             newLine.setAttribute('c2',obj.concept);
             newLine.setAttribute('class','line');
-
             $("#svg").append(newLine);
         });
         $('#save').click(function(){
-
             $(".line").each(function(){
-
                 id1 = $(this).attr('id').split('-')[1];
                 id2 = $(this).attr('id').split('-')[2];
-
                 $.grep(concepts,function(n,i){
                     if($('#con-'+ n.id).attr('data-x') != null){
                         n.posX = $('#con-'+ n.id).attr('data-x');
@@ -93,9 +120,7 @@
                         n.related.push(id2);
                     }
                 });
-
             });
-
             var csfrToken = $("input[name=csrfmiddlewaretoken]").val();
             $.ajax({
                 url: '{% url 'conceptos:ordenar' course.id %}',
@@ -109,12 +134,10 @@
                 }
             });
         });
-
         $('.concept-container').attr('style','height: '+height+"px");
         $('#svg').attr('style','height: '+ height + 'px');
-
         interact('.draggable')
-      .draggable({
+       .draggable({
         // enable inertial throwing
         inertia: false,
         // keep the element within the area of it's parent
@@ -125,91 +148,124 @@
         },
         // enable autoScroll
         autoScroll: true,
-
         // call this function on every dragmove event
         onmove: dragMoveListener,
         // call this function on every dragend event
-
       });
-
       function dragMoveListener (event) {
         var target = event.target,
             // keep the dragged position in the data-x/data-y attributes
             x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx,
             y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy;
-
         // translate the element
         target.style.webkitTransform =
-        target.style.transform =
-          'translate(' + x + 'px, ' + y + 'px)';
-
+        target.style.transform = 'translate(' + x + 'px, ' + y + 'px)';
         // update the posiion attributes
-        target.setAttribute('data-x', x);
-        target.setAttribute('data-y', y);
+          target.setAttribute('data-x', x);
+          target.setAttribute('data-y', y);
       }
-
       // this is used later in the resizing and gesture demos
       window.dragMoveListener = dragMoveListener;
-    });
+        $(".draggable").dblclick(function(){
+            selected = $(this).attr("id").split('-')[1];
+            })
+           .mouseup(function(){
 
-    $(".draggable").mousemove(function(){
-            px = parseFloat($(this).offset().left) - parseFloat($(this).width());
-            py = parseFloat($(this).offset().top) - parseFloat($(this).height()) + 10;
+                px = parseFloat($(this).offset().left) - parseFloat($(this).width()) + 10;
+                py = parseFloat($(this).offset().top) - parseFloat($(this).height()) + 10;
+                conceptId = $(this).attr('id').split('-')[1];
+                lines = $(".line");
+                lines.each(function(){
+                    if ($(this).attr('c1') == conceptId){
+                        $(this).attr('x1',px);
+                        $(this).attr('y1',py);
+                    }
+                    if ($(this).attr('c2') == conceptId){
+                        $(this).attr('x2',px);
+                        $(this).attr('y2',py);
+                    }
+                });
+            })
+           .click(function(){
+                if (selected != 0){
+                    second = $(this).attr("id").split('-')[1];
+                    line = 'line-' + selected +'-' + second;
+                    if (second != selected){
+                        if (lns.indexOf(line) == -1){
+                            pos1 = $("#con-"+selected).position();
+                            pos2 = $("#con-"+second).position();
+                            var newLine = document.createElementNS('http://www.w3.org/2000/svg','line');
+                            x1 = pos1.left + $('#con-'+selected).width();
+                            y1 = pos1.top + $('#con-'+selected).height();
+                            x2 = pos2.left + $('#con-'+second).width();
+                            y2 = pos2.top + $('#con-'+second).height();
+                            newLine.setAttribute('x1',x1);
+                            newLine.setAttribute('y1',y1);
+                            newLine.setAttribute('x2',x2);
+                            newLine.setAttribute('y2',y2);
+                            newLine.setAttribute('id',line);
+                            newLine.setAttribute('c1',selected);
+                            newLine.setAttribute('c2',second);
+                            newLine.setAttribute('class','line');
+                            $("#svg").append(newLine);
+                            newColor = darken($('#con-'+selected).css('background-color'));
+                            $('#con-'+second).css('background-color',newColor);
+                            lns.push(line);
+                        }
+                    }
+                    selected = 0;
+                } else {
+                    con= $(this).attr("id");
+                    conId = con.split('-')[1];
+                    clicked = conId;
 
-            conceptId = $(this).attr('id').split('-')[1];
-            lines = $(".line");
-
-            lines.each(function(){
-                if ($(this).attr('c1') == conceptId){
-                    $(this).attr('x1',px);
-                    $(this).attr('y1',py);
-                }
-                if ($(this).attr('c2') == conceptId){
-                    $(this).attr('x2',px);
-                    $(this).attr('y2',py);
+                    $("#concept-name").html("<h3>"+$(this).text().trim()+"</h3>");
+                    $.ajax({
+                        method: "GET",
+                        url: "{% url 'conceptos:recurso' %}",
+                        data : {id : conId},
+                        success : function(resp) {
+                            if (resp.data.url != "none"){
+                                $("#resource-link").val(resp.data.url);
+                            }else {
+                                $("#resource-link").val("");
+                            }
+                        }
+                    });
+                    $("#toggle-bar").toggle();
                 }
             });
+        $("#toggle-button").click(function(){
+            url =  $("#resource-link").val().trim();
+            var csfrToken = $("input[name=csrfmiddlewaretoken]").val();
 
-    });
-    $(".draggable").dblclick(function(){
-       selected = $(this).attr("id").split('-')[1];
-    });
-    $(".draggable").click(function(){
+            if ( url !="") {
+                $.ajax({
+                    url: "{% url 'conceptos:recurso' %}",
+                    method : "POST",
+                    data : {
+                        id: clicked,
+                        resource: url,
+                        csrfmiddlewaretoken: csfrToken
 
-        if (selected != 0){
-            second = $(this).attr("id").split('-')[1];
-            line = 'line-' + selected +'-' + second;
-
-            if (second != selected){
-                if (lns.indexOf(line) == -1){
-
-                    pos1 = $("#con-"+selected).position();
-                    pos2 = $("#con-"+second).position();
-
-                    var newLine = document.createElementNS('http://www.w3.org/2000/svg','line');
-
-                    x1 = pos1.left + $('#con-'+selected).width();
-                    y1 = pos1.top + $('#con-'+selected).height();
-                    x2 = pos2.left + $('#con-'+second).width();
-                    y2 = pos2.top + $('#con-'+second).height();
-
-                    newLine.setAttribute('x1',x1);
-                    newLine.setAttribute('y1',y1);
-                    newLine.setAttribute('x2',x2);
-                    newLine.setAttribute('y2',y2);
-                    newLine.setAttribute('id',line);
-                    newLine.setAttribute('c1',selected);
-                    newLine.setAttribute('c2',second);
-                    newLine.setAttribute('class','line');
-
-                    $("#svg").append(newLine);
-                    newColor = darken($('#con-'+selected).css('background-color'));
-                    $('#con-'+second).css('background-color',newColor);
-                    lns.push(line);
-                }
+                    },
+                    success:function(resp) {
+                        if (resp.status == 400) {
+                            $("#bar-message").html("<p>Introduce una URL </p>");
+                        }
+                        $("#toggle-bar").toggle();
+                    }
+                }).error(function(xhr, status, error){
+                    var err = eval("(" + xhr.responseText + ")");
+                    console.log(err.Message);
+                });
             }
-            selected = 0;
-        }
-    })
+        });
+        $("#close").click(function(){
+            $("#toggle-bar").toggle();
+        })
+    });
+
+
     </script>
 {% endblock %}

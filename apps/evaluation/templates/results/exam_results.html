@@ -11,6 +11,10 @@
         <div class="col-md-2 text-right"><strong>Unidad: </strong></div>
         <div class="col-md-10">{{ test.unit }}</div>
     </div>
+    <div class="row">
+        <div class="col-md-2 text-right"><strong>Porcentaje: </strong></div>
+        <div class="col-md-10">{{ percentage }}</div>
+    </div>
     <hr>
     <div class="results">
     {% if missing_concepts %}
@@ -27,7 +31,6 @@
 
         </div>
     {% endif %}
-
         <div class="row">
             <div class="col-md-10">
                 <h3>Resumen</h3>
@@ -35,9 +38,7 @@
         </div>
     {% for q in questions %}
         <div class="row">
-            <div class="col-md-10 concepts">
-
-            </div>
+            <div class="col-md-10 concepts"></div>
         </div>
         <div class="row">
             <div class="col-md-12">
@@ -92,7 +93,7 @@
     <div class="row title">
         <div class=" col-md-6 col-xs-10 btn-group btn-group-justified" role="group">
             <div class="btn-group" role="group">
-                <a href="#" class="btn btn-primary">Ir a actividades</a>
+                <a href="{% url 'cursos:recursos' q.exam.unit.course.id %}" class="btn btn-primary">Ir a actividades</a>
             </div>
             <div class="btn-group" role="group">
                 <a href="{% url 'examenes:listar' %}" class="btn btn-default">Regresar</a>

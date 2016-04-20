@@ -45,10 +45,17 @@ class AddQuestionView(View):
 		:return JsonResponse:
 		"""
 		ex = Exam.objects.active().get(id=request.POST['exam'])
+
 		q = Question(
 			sentence = request.POST['sentence'],
 			exam = ex
 		)
+		q.save()
+		concepts = request.POST.getlist('concepts[]')
+
+		for c in concepts:
+			con = Concept.objects.get(id=c)
+			q.concepts.add(con)
 		q.save()
 		answers = request.POST.getlist('answers[]')
 		for a in answers:
