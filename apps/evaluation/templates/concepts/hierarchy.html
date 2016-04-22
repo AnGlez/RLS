@@ -54,8 +54,13 @@
                                 {% if c.posX %}
                                     data-x="{{ c.posX }}" data-y="{{ c.posY }}"
                                     style="transform: translate({{ c.posX }}px, {{ c.posY }}px);">
+                                {% else %}
                                 {% endif %}
                             <p id="con-name">{{ c.name }}</p>
+                            <a href="#" class="add-resource" id="res-{{ c.id }}">
+                                <span class="glyphicon glyphicon-link"></span>
+                                recurso
+                            </a>
                         </div>
                     {% endfor %}
                 </div>
@@ -84,7 +89,6 @@
         concepts=[];
         lns =Array();
         var clicked ="";
-
         $('.draggable').each(function(){
             conId = $(this).attr('id').split('-')[1];
             concepts.push({"id":conId, "related":[]});
@@ -170,7 +174,6 @@
             selected = $(this).attr("id").split('-')[1];
             })
            .mouseup(function(){
-
                 px = parseFloat($(this).offset().left) - parseFloat($(this).width()) + 10;
                 py = parseFloat($(this).offset().top) - parseFloat($(this).height()) + 10;
                 conceptId = $(this).attr('id').split('-')[1];
@@ -214,31 +217,34 @@
                         }
                     }
                     selected = 0;
-                } else {
-                    con= $(this).attr("id");
-                    conId = con.split('-')[1];
-                    clicked = conId;
-
-                    $("#concept-name").html("<h3>"+$(this).text().trim()+"</h3>");
-                    $.ajax({
-                        method: "GET",
-                        url: "{% url 'conceptos:recurso' %}",
-                        data : {id : conId},
-                        success : function(resp) {
-                            if (resp.data.url != "none"){
-                                $("#resource-link").val(resp.data.url);
-                            }else {
-                                $("#resource-link").val("");
-                            }
-                        }
-                    });
-                    $("#toggle-bar").toggle();
                 }
             });
+
+        $(".add-resource").click(function(){
+            con= $(this).attr("id");
+            conId = con.split('-')[1];
+            conText = $("#con-"+conId+" p").text().trim();
+
+            clicked = conId;
+            $("#concept-name").html("<h3>"+conText+"</h3>");
+            $.ajax({
+                method: "GET",
+                url: "{% url 'conceptos:recurso' %}",
+                data : {id : conId},
+                success : function(resp) {
+                    if (resp.data.url != "none"){
+                        $("#resource-link").val(resp.data.url);
+                    }else {
+                        $("#resource-link").val("");
+                    }
+                }
+            });
+            $("#toggle-bar").toggle();
+        });
+
         $("#toggle-button").click(function(){
             url =  $("#resource-link").val().trim();
             var csfrToken = $("input[name=csrfmiddlewaretoken]").val();
-
             if ( url !="") {
                 $.ajax({
                     url: "{% url 'conceptos:recurso' %}",
@@ -247,7 +253,6 @@
                         id: clicked,
                         resource: url,
                         csrfmiddlewaretoken: csfrToken
-
                     },
                     success:function(resp) {
                         if (resp.status == 400) {
@@ -265,7 +270,5 @@
             $("#toggle-bar").toggle();
         })
     });
-
-
     </script>
 {% endblock %}

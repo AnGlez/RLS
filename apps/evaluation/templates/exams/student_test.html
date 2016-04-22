@@ -27,14 +27,20 @@
             <div class="question-wrapper">
                 <div class="question row">
                     <div class="col-md-10">
-                        {{ p.sentence }}
+                        <code class="question">{{ p.sentence|linebreaks }}</code>
                     </div>
                 </div>
                 <ul class="answers">
                 {% for a in p.answers %}
                     <li>
-                        <input type="radio" class="ans" name="ans-{{ p.id }}" value="{{ a.id }}">
-                        <code>{{ a.text }}</code>
+                    <div class="row">
+                        <div class="col-md-1">
+                             <input type="radio" class="ans" name="ans-{{ p.id }}" value="{{ a.id }}">
+                        </div>
+                        <div class="col-md-11">
+                            <pre> <code class="answer">{{ a.text|linebreaks }}</code></pre>
+                        </div>
+                    </div>
                     </li>
                 {% endfor %}
                 </ul>

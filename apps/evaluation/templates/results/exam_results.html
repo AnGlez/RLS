@@ -23,9 +23,17 @@
             <label>Conceptos de recuperación</label>
             <div>
                 {% for m in missing_concepts %}
-                    <a href="#" class="concept wrong-inverted">
+                    {% if m.resource %}
+                        <a href="{{ m.resource }}" class="concept wrong-inverted">
                         {{ m }}
-                    </a>
+                        </a>
+                    {% else %}
+                        <a href="#" class="concept wrong-inverted"
+                           data-toggle="tooltip" data-placement="right" title="No hay recurso para este concepto">
+                            {{ m }}
+                        </a>
+                    {% endif %}
+
                 {% endfor %}
             </div>
 
@@ -53,7 +61,13 @@
                             <div class="col-md-12 concepts">
                                 {% for c in q.concepts.all %}
                                     {% if q.correct %}
-                                        <a href="#" class="concept wrong-inverted">{{ c }}</a>
+                                        {% if c.resource %}
+                                            <a href="{{ c.resource }}" class="concept wrong-inverted">{{ c }}</a>
+                                        {% else %}
+                                            <button class="concept wrong-inverted"
+                                data-toggle="tooltip" data-placement="right" title="No hay recurso para este concepto">
+                                                    {{ c }}</button>
+                                        {% endif %}
                                     {% else %}
                                          <span class="concept right-inverted">{{ c }}</span>
                                     {% endif %}
@@ -100,4 +114,9 @@
             </div>
         </div>
     </div>
+    <script>
+        $(document).ready(function(){
+            $('[data-toggle="tooltip"]').tooltip();
+        });
+    </script>
 {% endblock %}

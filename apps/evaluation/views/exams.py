@@ -100,6 +100,8 @@ class ViewExamView(View):
 			for p in preguntas:
 					p.answers = PossibleAnswer.objects.active().filter(question=p)
 					p.num_answers = len(p.answers)
+			preguntas.order_by('?')
+
 			if request.user.is_staff:
 				question_form = QuestionForm()
 				return render_to_response('exams/detail.html',context = RequestContext(request, locals()))

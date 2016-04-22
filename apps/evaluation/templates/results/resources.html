@@ -18,26 +18,44 @@
     {% if paths %}
         <ul class="resource-list">
         {% for concept in paths %}
-            {% if concept.main.resource %}
-                <li class="parent-concept"><a href="{{ concept.main.resource }}">{{ concept.name }}</a></li>
+            {% if concept.resource %}
+                <li class="parent-concept">
+                    <a class="btn btn-info" href="{{ concept.resource }}" target="_blank">{{ concept.name }}</a>
+                </li>
             {% else %}
-                <li class="parent-concept no-resource">{{ concept.name }}</li>
+                <li class="parent-concept no-resource">
+                    <button class="btn"
+                       data-toggle="tooltip" data-placement="right" title="No hay recurso para este concepto"
+                       >{{ concept.name }}</button>
+                </li>
             {% endif %}
             {% if concept.children %}
                 <ul class="resource-sub">
                 {% for child in concept.children %}
                     {% if child.resource %}
-                        <li class="secondary-concept"><a href="{{ child.resource }}">{{ child.name }}</a></li>
+                        <li class="secondary-concept">
+                            <a class="btn btn-default" href="{{ child.resource }}" target="_blank">{{ child.name }}</a>
+                        </li>
                     {% else %}
-                        <li class="secondary-concept no-resource">{{ child.name }}</li>
+                        <li class="secondary-concept no-resource">
+                            <button class="btn"
+                               data-toggle="tooltip" data-placement="right" title="No hay recurso para este concepto"
+                                    >{{ child.name }}</button>
+                        </li>
+
                     {% endif %}
                 {% endfor %}
                 </ul>
             {% endif %} 
         {% endfor %}
         </ul>
+        {% else %}
+        <p>Aun no tienes recursos de recuperación</p>
     {% endif %}
-
-
     </div>
+    <script>
+        $(document).ready(function(){
+            $('[data-toggle="tooltip"]').tooltip();
+        });
+    </script>
 {% endblock %}

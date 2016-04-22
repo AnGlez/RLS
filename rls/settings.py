@@ -91,7 +91,7 @@ DATABASES = {
 
 LANGUAGE_CODE = 'es-mx'
 
-TIME_ZONE = 'Mexico_City'
+TIME_ZONE = 'None'
 
 USE_I18N = True
 

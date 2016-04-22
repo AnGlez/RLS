@@ -166,12 +166,7 @@ h1{
     background-color:#31708f;
     color:#fff;
 }
-.right-inverted:hover {
-    background-color: #fff;
-    color: #31708f;
-    text-decoration: none;
-    border: solid 1px #31708f;;
-}
+
 .concepts{
     margin-bottom: 10px;
     margin-top: 10px;
@@ -255,7 +250,11 @@ h1{
 }
 .parent-concept, .secondary-concept {
     margin-bottom: 10px;
+    padding: 7px;
+    border-radius: 8px;
+    font-size: 14px;
+    margin-right: 2px;
 }
-.parent-concept {
-    color: #31708f
-}
+.question {color:#777}
+.answer {color:#31708f}
+pre{border: transparent}

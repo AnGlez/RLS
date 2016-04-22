@@ -85,7 +85,7 @@ class Concept(Model):
 	)
 	posX = FloatField(blank=True, null=True)
 	posY = FloatField(blank=True, null=True)
-	resource = URLField(max_length=500, null=True)
+	resource = URLField(max_length=500, null=True, blank=True)
 
 
 	def __unicode__(self):
@@ -103,7 +103,6 @@ class PossibleAnswer(Model):
 		-Question
 	"""
 	text = TextField(
-		max_length=500,
 		blank= False
 	)
 	question = ForeignKey('evaluation.Question',
