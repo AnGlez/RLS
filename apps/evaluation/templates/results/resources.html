@@ -21,6 +21,9 @@
             {% if concept.resource %}
                 <li class="parent-concept">
                     <a class="btn btn-info" href="{{ concept.resource }}" target="_blank">{{ concept.name }}</a>
+                    {% if concept.resource_description %}
+                        <span class="resource-description">{{ concept.resource_description }}</span>
+                    {% endif %}
                 </li>
             {% else %}
                 <li class="parent-concept no-resource">
@@ -34,13 +37,14 @@
                 {% for child in concept.children %}
                     {% if child.resource %}
                         <li class="secondary-concept">
-                            <a class="btn btn-default" href="{{ child.resource }}" target="_blank">{{ child.name }}</a>
+                            <a class="btn btn-default" href="{{ child.resource }}" target="_blank"
+                               data-toggle="tooltip" data-placement="right" title="{{ child.resource_description }}"
+
+                                    >{{ child.name }}</a>
                         </li>
                     {% else %}
                         <li class="secondary-concept no-resource">
-                            <button class="btn"
-                               data-toggle="tooltip" data-placement="right" title="No hay recurso para este concepto"
-                                    >{{ child.name }}</button>
+                            <button class="btn">{{ child.name }}</button>
                         </li>
 
                     {% endif %}

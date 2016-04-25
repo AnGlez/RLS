@@ -195,9 +195,9 @@ class ViewResourcesView(View):
 				if j in missing_concepts: desc.remove(j)
 				for k in j.required_by.all():
 					if k not in missing_concepts and k not in desc:
-						desc.extend(k)
+						desc.append(k)
 
-			i.children.extend(desc)
+				i.children.extend(desc)
 			paths.append(i)
 			desc[:] = []
 

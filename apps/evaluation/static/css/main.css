@@ -258,3 +258,8 @@ h1{
 .question {color:#777}
 .answer {color:#31708f}
 pre{border: transparent}
+.resource-description{
+    padding: 10px;
+    background-color: #e7e7e7;
+    margin-left: 15px;
+}

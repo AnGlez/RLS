@@ -86,7 +86,7 @@ class Concept(Model):
 	posX = FloatField(blank=True, null=True)
 	posY = FloatField(blank=True, null=True)
 	resource = URLField(max_length=500, null=True, blank=True)
-
+	resource_description = CharField(null=True, blank=True, max_length=1000)
 
 	def __unicode__(self):
 		return self.name
